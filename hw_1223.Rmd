@@ -18,7 +18,7 @@ knitr::opts_chunk$set(echo = TRUE)
 使用`read.csv()`函數讀取資料集
 
 ```{r warning=FALSE, message=FALSE}
-exchangerate_csv <- read.csv("https://raw.githubusercontent.com/faytseng/Start-R/master/ExchangeRate_l3mth.csv", header=TRUE , colClasses = c("Date", "character", "numeric"))
+exchangerate_csv <- read.csv("https://raw.githubusercontent.com/faytseng/StartR/docs/ExchangeRate_l3mth.csv", header=TRUE , colClasses = c("Date", "character", "numeric"))
 
 ```
 
