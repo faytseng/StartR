@@ -25,9 +25,8 @@
 </p>
 
 也可以直接複制以下的連結，至Google貼上開啟：  
-<a href="https://ai.studio/apps/drive/1JFvrunwAn4hU0yOXB3rXPJpYTv4kcVxj?openExternalBrowser=1"
-   target="_blank"
-   rel="noopener noreferrer">
+https://ai.studio/apps/drive/1JFvrunwAn4hU0yOXB3rXPJpYTv4kcVxj
+
 ---
 
 ## 🧩 專案內容
