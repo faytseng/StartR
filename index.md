@@ -7,7 +7,7 @@
 ## 🚀 開始使用
 
 <p align="left">
-  <a href="https://ai.studio/apps/drive/1JFvrunwAn4hU0yOXB3rXPJpYTv4kcVxj style="
+  <a href="https://ai.studio/apps/drive/1JFvrunwAn4hU0yOXB3rXPJpYTv4kcVxj" style="
       display: inline-block;
       background: #2b6cb0;
       color: white;
@@ -21,6 +21,7 @@
   </a>
 </p>
 
+也可以直接點這裡：  
 https://ai.studio/apps/drive/1JFvrunwAn4hU0yOXB3rXPJpYTv4kcVxj
 
 ---
@@ -33,8 +34,3 @@ https://ai.studio/apps/drive/1JFvrunwAn4hU0yOXB3rXPJpYTv4kcVxj
 - 自動構圖、調整、最佳化
 - 前端使用 React + Vite + TypeScript
 - 自訂 Components / Services / Utils 模組化架構
-
----
-
-## 🗂 Repository 結構
-
