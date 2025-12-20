@@ -7,7 +7,7 @@
 ## 🚀 開始使用
 
 <p align="left">
-  <a href="https://faytseng.github.io/StartR/index.html" style="
+  <a href="[https://faytseng.github.io/StartR/index.html](https://ai.studio/apps/drive/1JFvrunwAn4hU0yOXB3rXPJpYTv4kcVxj) style="
       display: inline-block;
       background: #2b6cb0;
       color: white;
