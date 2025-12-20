@@ -7,7 +7,10 @@
 ## 🚀 開始使用
 
 <p align="left">
-  <a href="https://ai.studio/apps/drive/1JFvrunwAn4hU0yOXB3rXPJpYTv4kcVxj" style="
+  <a href="https://ai.studio/apps/drive/1JFvrunwAn4hU0yOXB3rXPJpYTv4kcVxj?openExternalBrowser=1" 
+     target="_blank" 
+     rel="noopener noreferrer"
+     style="
       display: inline-block;
       background: #2b6cb0;
       color: white;
@@ -17,13 +20,14 @@
       font-size: 18px;
       font-weight: bold;
   ">
-    ▶️ 進入 AI 表情貼圖神器
+    ▶️ 進入 AI 表情貼圖神器（跳出 LINE）
   </a>
 </p>
 
 也可以直接點這裡：  
-https://ai.studio/apps/drive/1JFvrunwAn4hU0yOXB3rXPJpYTv4kcVxj
-
+<a href="https://ai.studio/apps/drive/1JFvrunwAn4hU0yOXB3rXPJpYTv4kcVxj?openExternalBrowser=1"
+   target="_blank"
+   rel="noopener noreferrer">
 ---
 
 ## 🧩 專案內容
