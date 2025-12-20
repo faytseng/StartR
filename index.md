@@ -7,7 +7,7 @@
 ## 🚀 開始使用
 
 <p align="left">
-  <a href="./index.html" style="
+  <a href="index.html" style="
       display: inline-block;
       background: #2b6cb0;
       color: white;
