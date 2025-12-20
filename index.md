@@ -7,7 +7,7 @@
 ## 🚀 開始使用
 
 <p align="left">
-  <a href="https://gemini.google.com/share/7c3574ebeeb6)?openExternalBrowser=1" 
+  <a href="https://gemini.google.com/share/a65ca1f9de64?openExternalBrowser=1" 
      target="_blank" 
      rel="noopener noreferrer"
      style="
@@ -25,7 +25,7 @@
 </p>
 
 也可以直接複制以下的連結，至Google貼上開啟：  
-https://gemini.google.com/share/7c3574ebeeb6
+https://gemini.google.com/share/a65ca1f9de64
 
 ---
 
