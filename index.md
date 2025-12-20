@@ -20,7 +20,7 @@
       font-size: 18px;
       font-weight: bold;
   ">
-    ▶️ 進入 AI 表情貼圖神器（跳出 LINE）
+    ▶️ 進入 Gem Line 貼圖大師（跳出 LINE）
   </a>
 </p>
 
