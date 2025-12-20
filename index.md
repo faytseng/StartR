@@ -7,7 +7,7 @@
 ## 🚀 開始使用
 
 <p align="left">
-  <a href="https://ai.studio/apps/drive/1JFvrunwAn4hU0yOXB3rXPJpYTv4kcVxj?openExternalBrowser=1" 
+  <a href="https://gemini.google.com/share/c0bef31b3ec9)?openExternalBrowser=1" 
      target="_blank" 
      rel="noopener noreferrer"
      style="
@@ -25,7 +25,7 @@
 </p>
 
 也可以直接複制以下的連結，至Google貼上開啟：  
-https://ai.studio/apps/drive/1JFvrunwAn4hU0yOXB3rXPJpYTv4kcVxj
+[https://ai.studio/apps/drive/1JFvrunwAn4hU0yOXB3rXPJpYTv4kcVxj](https://gemini.google.com/share/c0bef31b3ec9)
 
 ---
 
