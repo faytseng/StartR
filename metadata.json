@@ -1,0 +1,5 @@
+{
+  "name": "LINE表情貼圖生成器",
+  "description": "這是一款基於 Gemini 2.5 Flash Image 的專業表情貼圖生成工具。使用者可以上傳單張角色圖片並生成多種表情變化。本應用程式還包含了一個強大的綠幕一鍵去背工具，專門處理生成的綠幕背景。",
+  "requestFramePermissions": []
+}
