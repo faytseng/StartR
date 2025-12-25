@@ -27,8 +27,6 @@
 也可以直接複制以下的連結，至Google貼上開啟：  
 https://gemini.google.com/share/32ca53605eb6
 
-
-
 ---
 
 # 🎨 LINE 貼圖生成器｜使用說明
