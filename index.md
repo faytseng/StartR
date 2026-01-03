@@ -71,8 +71,20 @@ Gem AI 把工具，藏進旅程裡，
      target="_blank"
      rel="noopener noreferrer"
      style="
-     display: inline-block; background: #2b6cb0; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-size: 18px; font-weight: bold; 
-  ">
+      display: inline-block;
+      background: linear-gradient(180deg, #3b82f6 0%, #2563eb 100%);
+      color: #ffffff;
+      padding: 14px 26px;
+      border-radius: 10px;
+      text-decoration: none;
+      font-size: 18px;
+      font-weight: 700;
+      box-shadow: 0 6px 0 #1e40af, 0 10px 20px rgba(0,0,0,0.18);
+      transition: all 0.15s ease;
+  "
+  onmousedown="this.style.transform='translateY(4px)'; this.style.boxShadow='0 2px 0 #1e40af, 0 6px 12px rgba(0,0,0,0.18)';"
+  onmouseup="this.style.transform='translateY(0)'; this.style.boxShadow='0 6px 0 #1e40af, 0 10px 20px rgba(0,0,0,0.18)';"
+  >
     📱 進入對話 AI 投資顧問 APP
   </a>
 </p>
@@ -94,8 +106,20 @@ Gem AI 把工具，藏進旅程裡，
      target="_blank"
      rel="noopener noreferrer"
      style="
-      display: inline-block; background: #2b6cb0; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-size: 18px; font-weight: bold; 
-  ">
+      display: inline-block;
+      background: linear-gradient(180deg, #3b82f6 0%, #2563eb 100%);
+      color: #ffffff;
+      padding: 14px 26px;
+      border-radius: 10px;
+      text-decoration: none;
+      font-size: 18px;
+      font-weight: 700;
+      box-shadow: 0 6px 0 #1e40af, 0 10px 20px rgba(0,0,0,0.18);
+      transition: all 0.15s ease;
+  "
+  onmousedown="this.style.transform='translateY(4px)'; this.style.boxShadow='0 2px 0 #1e40af, 0 6px 12px rgba(0,0,0,0.18)';"
+  onmouseup="this.style.transform='translateY(0)'; this.style.boxShadow='0 6px 0 #1e40af, 0 10px 20px rgba(0,0,0,0.18)';"
+  >
     🌐 進入思考 AI 投資顧問 WEB
   </a>
 </p>
