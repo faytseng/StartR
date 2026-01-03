@@ -1,0 +1,122 @@
+# Gem AI  
+## 創意活到老，學習到老
+
+創意，不會過期。  
+學習，也沒有終點。
+
+我們一直在生活裡學習，  
+只是有時候，需要一個地方，  
+讓好奇心慢慢長大。
+
+---
+
+## 🎬 一段可以走一輩子的學習旅程
+
+學習不是一條直線，  
+而是一段會反覆回來的路。
+
+Gem AI 把工具，藏進旅程裡，  
+陪你在不同階段，  
+用不同方式，繼續前行。
+
+---
+
+## 🌱 第一段｜好奇的時候（創作）
+
+有時候，只是想動手做點什麼。  
+不為成果，只為感覺自己還在創作。
+
+把腦中的畫面，  
+留在日常之中，  
+讓靈感，有地方停靠。
+
+<!-- 創作入口 -->
+<p align="left">
+  <a href="https://gemini.google.com/share/32ca53605eb6?openExternalBrowser=1"
+     target="_blank"
+     rel="noopener noreferrer"
+     style="
+      display: inline-block;
+      padding: 12px 22px;
+      border-radius: 999px;
+      background: #2b6cb0;
+      color: #ffffff;
+      text-decoration: none;
+      font-size: 16px;
+      font-weight: 600;
+  ">
+    🎨 進入創作 LINE 貼圖大頧
+  </a>
+</p>
+
+---
+
+## 🌿 第二段｜學習的時候（對話）
+
+當問題慢慢變多，  
+我們開始想找人聊聊，  
+把模糊的想法，整理成語言。
+
+學習不一定是上課，  
+有時候，只是有人願意陪你想清楚。
+
+<!-- 對話入口 -->
+<p align="left">
+  <a href="https://gemini.google.com/share/9f7065d0ae31?openExternalBrowser=1"
+     target="_blank"
+     rel="noopener noreferrer"
+     style="
+      display: inline-block;
+      padding: 12px 22px;
+      border-radius: 999px;
+      background: #2b6cb0;
+      color: #ffffff;
+      text-decoration: none;
+      font-size: 16px;
+      font-weight: 600;
+  ">
+    📱 進入對話 AI 投資顧問 APP
+  </a>
+</p>
+
+---
+
+## 🌳 第三段｜選擇的時候（思考）
+
+走得夠久之後，  
+我們不再急著前進，  
+而是想把每一步，走得安心。
+
+慢下來，看清楚，  
+然後再往前。
+
+<!-- 思考入口 -->
+<p align="left">
+  <a href="https://gemini.google.com/share/8465b0905d91?openExternalBrowser=1"
+     target="_blank"
+     rel="noopener noreferrer"
+     style="
+      display: inline-block;
+      padding: 12px 22px;
+      border-radius: 999px;
+      background: #2b6cb0;
+      color: #ffffff;
+      text-decoration: none;
+      font-size: 16px;
+      font-weight: 600;
+  ">
+    🌐 進入思考 投資顧問小網
+  </a>
+</p>
+
+---
+
+## ♾ 不是終點，而是循環
+
+創作，讓人保持年輕。  
+對話，讓人持續學習。  
+思考，讓人走得長遠。
+
+這三段旅程，  
+不是一次完成，  
+而是一輩子，反覆走過。
