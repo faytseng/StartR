@@ -67,7 +67,7 @@ Gem AI 把工具，藏進旅程裡，
 
 <!-- 對話入口 -->
 <p align="left">
-  <a href="https://gemini.google.com/share/9f7065d0ae31?openExternalBrowser=1"
+  <a href="https://gemini.google.com/share/a44456e7952d?openExternalBrowser=1"
      target="_blank"
      rel="noopener noreferrer"
      style="
