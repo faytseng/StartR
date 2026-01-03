@@ -38,7 +38,7 @@ Gem AI 把工具，藏進旅程裡，
      style="
     display: inline-block; background: #2b6cb0; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-size: 18px; font-weight: bold; 
   ">
-    🎨 進入 創作 LINE 貼圖大頧（跳出 LINE）
+    🎨 進入 創作 LINE 貼圖大師
   </a>
 </p>
 
@@ -84,7 +84,7 @@ Gem AI 把工具，藏進旅程裡，
      style="
       display: inline-block; background: #2b6cb0; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-size: 18px; font-weight: bold; 
   ">
-    🌐 進入思考 投資顧問小網
+    🌐 進入思考 AI 投資顧問 WEB
   </a>
 </p>
 
