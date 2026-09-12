@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>清邁雙飯店全生活圈旅遊地圖 (8人家族版)</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Leaflet CSS & JS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  
+  <!-- FontAwesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Plus+Jakarta+Sans:wght@500;700;800&display=swap" rel="stylesheet">
+  
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', 'Noto Sans TC', sans-serif;
+    }
+    #map {
+      height: 100%;
+      width: 100%;
+      z-index: 10;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #f8fafc;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 9999px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+    @keyframes pulse-ring {
+      0% { transform: scale(0.95); opacity: 0.85; }
+      50% { transform: scale(1.45); opacity: 0; }
+      100% { transform: scale(0.95); opacity: 0; }
+    }
+    .hotel-pulse-akara {
+      animation: pulse-ring 2.2s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+    }
+    .hotel-pulse-thee {
+      animation: pulse-ring 2.2s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+      animation-delay: 1.1s;
+    }
+    .leaflet-popup-content-wrapper {
+      border-radius: 18px;
+      padding: 6px;
+      box-shadow: 0 16px 36px rgba(15, 23, 42, 0.2);
+      border: 1px solid rgba(226, 232, 240, 0.8);
+    }
+    .leaflet-popup-content {
+      margin: 8px 12px;
+      line-height: 1.45;
+    }
+    .poi-custom-pin, .hotel-custom-pin {
+      background: transparent !important;
+      border: none !important;
+    }
+    .hide-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .hide-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 flex flex-col h-screen overflow-hidden antialiased">
+
+  <!-- Header Section -->
+  <header class="bg-white border-b border-slate-200 px-3.5 py-2.5 sm:px-5 sm:py-3 flex items-center justify-between shadow-sm z-50 shrink-0">
+    <div class="flex items-center gap-2.5">
+      <div class="w-9 h-9 rounded-2xl bg-gradient-to-tr from-indigo-600 to-teal-500 flex items-center justify-center text-white shadow-md shadow-indigo-100">
+        <i class="fa-solid fa-map-location-dot text-base"></i>
+      </div>
+      <div>
+        <div class="flex items-center gap-2">
+          <h1 class="font-extrabold text-slate-900 leading-tight text-sm sm:text-base tracking-tight">
+            清邁雙飯店全景生活圈
+          </h1>
+          <span class="bg-indigo-50 text-indigo-700 text-[10px] font-bold px-2 py-0.5 rounded-full border border-indigo-100/80 hidden md:inline">8人家族版</span>
+        </div>
+        <p class="text-[10px] sm:text-xs text-slate-500 font-medium">Thai Akara (古城心臟) vs THEE Vijit (河濱夜市圈)</p>
+      </div>
+    </div>
+    
+    <div class="flex items-center gap-1.5 sm:gap-2.5">
+      <!-- Hotel Features Compare Button -->
+      <button onclick="toggleHotelModal(true)" class="px-2.5 sm:px-3 py-1.5 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200/70 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all shadow-sm active:scale-95">
+        <i class="fa-solid fa-award text-amber-600"></i>
+        <span class="hidden sm:inline">飯店設施特色</span>
+        <span class="sm:hidden">設施</span>
+      </button>
+
+      <!-- Share Button -->
+      <button onclick="toggleShareModal(true)" class="px-2.5 sm:px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-colors active:scale-95">
+        <i class="fa-solid fa-arrow-up-from-bracket"></i>
+        <span class="hidden sm:inline">分享行程</span>
+      </button>
+      
+      <!-- Open Catalog / Search Drawer Button -->
+      <button onclick="toggleSidebar(true)" class="px-3 sm:px-4 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold shadow-md shadow-indigo-200 hover:shadow-lg transition-all flex items-center gap-1.5 active:scale-95">
+        <i class="fa-solid fa-list-check"></i>
+        <span>景點清單</span>
+        <span id="poi-count-badge" class="bg-white/25 text-white px-1.5 py-0.5 rounded-full text-[10px] font-black">35</span>
+      </button>
+    </div>
+  </header>
+
+  <main class="flex-1 flex relative overflow-hidden">
+    
+    <!-- Map Canvas Container -->
+    <div class="flex-1 relative h-full w-full">
+      <div id="map"></div>
+
+      <!-- Floating Quick Controls (Top Left) -->
+      <div class="absolute top-3.5 left-3.5 z-[400] bg-white/95 backdrop-blur-md p-3 rounded-2xl shadow-xl border border-slate-100/90 max-w-[240px] transition-all">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-1.5 mb-2">
+          <h3 class="text-xs font-black text-slate-800 flex items-center gap-1.5">
+            <i class="fa-solid fa-crosshairs text-indigo-500"></i> 核心飯店對焦
+          </h3>
+          <span class="text-[9px] font-bold text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded">快速切換</span>
+        </div>
+        
+        <div class="space-y-1.5">
+          <button onclick="focusOnHotel('thai_akara')" class="w-full flex items-center justify-between bg-indigo-50/70 hover:bg-indigo-100/80 px-2.5 py-1.5 rounded-xl border border-indigo-100 transition-all group text-left">
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-indigo-600 shadow-sm block ring-2 ring-indigo-200"></span>
+              <div>
+                <div class="text-xs font-black text-indigo-900">Thai Akara</div>
+                <div class="text-[9px] text-indigo-600 font-medium">古城心臟・大採光泳池</div>
+              </div>
+            </div>
+            <i class="fa-solid fa-chevron-right text-[10px] text-indigo-400 group-hover:translate-x-0.5 transition-transform"></i>
+          </button>
+          
+          <button onclick="focusOnHotel('thee_vijit')" class="w-full flex items-center justify-between bg-teal-50/70 hover:bg-teal-100/80 px-2.5 py-1.5 rounded-xl border border-teal-100 transition-all group text-left">
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-teal-600 shadow-sm block ring-2 ring-teal-200"></span>
+              <div>
+                <div class="text-xs font-black text-teal-900">THEE Vijit</div>
+                <div class="text-[9px] text-teal-600 font-medium">護城河畔・天井綠意池</div>
+              </div>
+            </div>
+            <i class="fa-solid fa-chevron-right text-[10px] text-teal-400 group-hover:translate-x-0.5 transition-transform"></i>
+          </button>
+        </div>
+
+        <div class="mt-2.5 pt-2 border-t border-slate-100 flex items-center justify-between text-[10px]">
+          <button onclick="fitAllPOIBounds(true)" class="text-indigo-600 hover:bg-indigo-50 px-2 py-1 rounded-lg font-bold flex items-center gap-1 transition-colors">
+            <i class="fa-solid fa-expand text-[10px]"></i> 全景視角
+          </button>
+          <span class="text-slate-200">|</span>
+          <button onclick="toggleRangeCircles()" id="btn-toggle-ranges" class="text-slate-600 hover:bg-slate-100 px-2 py-1 rounded-lg font-bold transition-colors">
+            隱藏步行圈
+          </button>
+        </div>
+      </div>
+
+      <!-- Distance & Transit HUD (Smart Bottom Sheet Overlay) -->
+      <div id="distance-hud" class="absolute bottom-5 inset-x-0 mx-auto w-[92%] max-w-[430px] z-[400] bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl border border-slate-100 p-4 hidden transform transition-all duration-300">
+        <button onclick="clearDistanceHUD()" class="absolute top-3 right-3 w-7 h-7 flex items-center justify-center bg-slate-100 hover:bg-slate-200 rounded-full text-slate-500 transition-colors">
+          <i class="fa-solid fa-xmark text-xs"></i>
+        </button>
+        
+        <div class="flex items-start gap-3">
+          <div id="hud-icon" class="w-11 h-11 rounded-2xl flex items-center justify-center text-lg shrink-0 mt-0.5 shadow-sm"></div>
+          <div class="flex-1 min-w-0 pr-6">
+            <div class="flex items-center gap-2">
+              <span id="hud-type" class="text-[10px] font-extrabold px-2 py-0.5 rounded-md uppercase tracking-wider text-white"></span>
+              <span id="hud-tag" class="text-[10px] font-bold text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded"></span>
+            </div>
+            <h3 id="hud-title" class="font-black text-slate-900 text-sm sm:text-base truncate leading-tight mt-1"></h3>
+          </div>
+        </div>
+
+        <!-- 2 Hotels Transit Comparison Grid -->
+        <div class="mt-3.5 grid grid-cols-2 gap-2.5">
+          <!-- Akara -->
+          <div class="bg-gradient-to-b from-indigo-50/80 to-indigo-50/30 rounded-2xl p-2.5 border border-indigo-100/70">
+            <div class="text-[10px] text-indigo-600 font-extrabold flex items-center gap-1 mb-1">
+              <span class="w-2 h-2 rounded-full bg-indigo-600 block"></span> 自 Thai Akara
+            </div>
+            <div id="hud-akara-time" class="text-indigo-950 font-black text-sm"></div>
+            <div id="hud-akara-dist" class="text-indigo-500 text-[10px] font-semibold mt-0.5"></div>
+          </div>
+          <!-- THEE Vijit -->
+          <div class="bg-gradient-to-b from-teal-50/80 to-teal-50/30 rounded-2xl p-2.5 border border-teal-100/70">
+            <div class="text-[10px] text-teal-600 font-extrabold flex items-center gap-1 mb-1">
+              <span class="w-2 h-2 rounded-full bg-teal-600 block"></span> 自 THEE Vijit
+            </div>
+            <div id="hud-thee-time" class="text-teal-950 font-black text-sm"></div>
+            <div id="hud-thee-dist" class="text-teal-500 text-[10px] font-semibold mt-0.5"></div>
+          </div>
+        </div>
+
+        <!-- Practical 8-Person Family Tip -->
+        <div id="hud-tip" class="mt-2.5 bg-slate-50 text-slate-700 text-xs p-2.5 rounded-xl font-medium border border-slate-100 leading-relaxed"></div>
+      </div>
+
+      <!-- Mobile Floating Button to Re-Open Catalog -->
+      <button id="mobile-floating-btn" onclick="toggleSidebar(true)" class="lg:hidden absolute bottom-5 right-4 z-[300] bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-3 rounded-full shadow-2xl font-bold text-xs flex items-center gap-2 transition-transform active:scale-95 shadow-indigo-300">
+        <i class="fa-solid fa-magnifying-glass"></i> 
+        <span>探索全部地點 (35)</span>
+      </button>
+    </div>
+
+    <!-- Backdrop for Mobile Sidebar -->
+    <div id="sidebar-backdrop" onclick="toggleSidebar(false)" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-[450] hidden transition-opacity duration-300 lg:hidden"></div>
+
+    <!-- Right Sidebar (POI Explorer & Search Catalog) -->
+    <aside id="sidebar" class="fixed lg:static inset-y-0 right-0 z-[500] w-full sm:w-[450px] bg-white border-l border-slate-200 flex flex-col shadow-2xl lg:shadow-none translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out">
+      
+      <!-- Drawer Header -->
+      <div class="px-4 py-3 border-b border-slate-100 flex items-center justify-between bg-slate-50/80 shrink-0">
+        <button onclick="toggleSidebar(false)" class="flex items-center gap-1.5 text-slate-600 hover:text-indigo-600 font-bold text-xs py-1 px-2 rounded-lg hover:bg-slate-100 transition-colors">
+          <i class="fa-solid fa-arrow-left"></i>
+          <span>地圖全景模式</span>
+        </button>
+        <span class="font-extrabold text-slate-800 text-xs tracking-wide">景點・美食・生活圈導覽</span>
+        <button onclick="toggleSidebar(false)" class="w-7 h-7 flex items-center justify-center bg-white hover:bg-slate-200 text-slate-500 rounded-full shadow-sm transition-colors">
+          <i class="fa-solid fa-xmark text-xs"></i>
+        </button>
+      </div>
+
+      <!-- Search and Filter Bar -->
+      <div class="px-4 pt-3.5 pb-2 shrink-0 bg-white border-b border-slate-100 shadow-[0_4px_12px_-6px_rgba(0,0,0,0.04)]">
+        
+        <!-- Life-Sphere Segmented Control -->
+        <div class="grid grid-cols-4 bg-slate-100/90 p-1 rounded-xl mb-3 text-[11px] font-bold">
+          <button id="tab-all" onclick="setLifeSphere('all')" class="sphere-tab active py-1.5 rounded-lg bg-white text-slate-900 shadow-sm transition-all text-center">全部</button>
+          <button id="tab-akara" onclick="setLifeSphere('akara')" class="sphere-tab py-1.5 rounded-lg text-slate-600 hover:text-indigo-600 transition-all text-center">古城核心</button>
+          <button id="tab-thee" onclick="setLifeSphere('thee')" class="sphere-tab py-1.5 rounded-lg text-slate-600 hover:text-teal-600 transition-all text-center">市場河濱</button>
+          <button id="tab-transport" onclick="setLifeSphere('transport')" class="sphere-tab py-1.5 rounded-lg text-slate-600 hover:text-sky-600 transition-all text-center">交通車站</button>
+        </div>
+
+        <!-- Search Input -->
+        <div class="relative mb-2.5">
+          <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+          <input type="text" id="search-input" placeholder="搜尋景點、米其林餐廳、夜市、按摩或車站..." class="w-full bg-slate-50 border border-slate-200 text-slate-800 text-xs rounded-xl pl-9 pr-9 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500 transition-all placeholder:text-slate-400 font-medium">
+          <button id="clear-search" onclick="clearSearch()" class="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 flex items-center justify-center text-slate-400 hover:text-slate-600 hidden rounded-full">
+            <i class="fa-solid fa-xmark text-xs"></i>
+          </button>
+        </div>
+
+        <!-- Category Horizontal Pills -->
+        <div class="flex overflow-x-auto gap-1.5 pb-2 pt-1 hide-scrollbar">
+          <button onclick="setCategoryFilter('all')" class="cat-filter active shrink-0 px-3 py-1.5 rounded-full text-[11px] font-bold bg-slate-900 text-white transition-colors" data-cat="all">全部 (35)</button>
+          <button onclick="setCategoryFilter('massage')" class="cat-filter shrink-0 px-3 py-1.5 rounded-full text-[11px] font-bold bg-slate-100 text-slate-600 hover:bg-emerald-100 hover:text-emerald-700 transition-colors" data-cat="massage">💆 按摩SPA</button>
+          <button onclick="setCategoryFilter('market')" class="cat-filter shrink-0 px-3 py-1.5 rounded-full text-[11px] font-bold bg-slate-100 text-slate-600 hover:bg-purple-100 hover:text-purple-700 transition-colors" data-cat="market">🌙 夜市市集</button>
+          <button onclick="setCategoryFilter('sight')" class="cat-filter shrink-0 px-3 py-1.5 rounded-full text-[11px] font-bold bg-slate-100 text-slate-600 hover:bg-rose-100 hover:text-rose-700 transition-colors" data-cat="sight">🏯 寺廟名勝</button>
+          <button onclick="setCategoryFilter('photo')" class="cat-filter shrink-0 px-3 py-1.5 rounded-full text-[11px] font-bold bg-slate-100 text-slate-600 hover:bg-pink-100 hover:text-pink-700 transition-colors" data-cat="photo">📸 拍照打卡</button>
+          <button onclick="setCategoryFilter('food')" class="cat-filter shrink-0 px-3 py-1.5 rounded-full text-[11px] font-bold bg-slate-100 text-slate-600 hover:bg-amber-100 hover:text-amber-800 transition-colors" data-cat="food">🍽️ 特色美食</button>
+          <button onclick="setCategoryFilter('cafe')" class="cat-filter shrink-0 px-3 py-1.5 rounded-full text-[11px] font-bold bg-slate-100 text-slate-600 hover:bg-sky-100 hover:text-sky-700 transition-colors" data-cat="cafe">☕ 咖啡早午餐</button>
+          <button onclick="setCategoryFilter('transport')" class="cat-filter shrink-0 px-3 py-1.5 rounded-full text-[11px] font-bold bg-slate-100 text-slate-600 hover:bg-blue-100 hover:text-blue-700 transition-colors" data-cat="transport">🚗 交通車站</button>
+        </div>
+      </div>
+
+      <!-- POI List Container -->
+      <div id="poi-list-container" class="flex-1 overflow-y-auto custom-scrollbar p-3 space-y-2.5 bg-slate-50/60">
+        <!-- Injected via JavaScript -->
+      </div>
+    </aside>
+  </main>
+
+  <!-- Hotel Facilities Deep-Dive Modal (Pools, Breakfast, Style, 8-Person Suitability) -->
+  <div id="hotel-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[1000] hidden flex items-center justify-center p-4 opacity-0 transition-opacity duration-300">
+    <div class="bg-white rounded-3xl w-full max-w-2xl max-h-[90vh] flex flex-col shadow-2xl transform scale-95 transition-transform duration-300 overflow-hidden" id="hotel-modal-content">
+      
+      <!-- Modal Header -->
+      <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/90 shrink-0">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-xl bg-amber-500 text-white flex items-center justify-center">
+            <i class="fa-solid fa-hotel text-sm"></i>
+          </div>
+          <div>
+            <h3 class="font-extrabold text-slate-900 text-base">雙飯店渡假特色與設施深度比較</h3>
+            <p class="text-[11px] text-slate-500">泳池・早餐・房間風格・8人家庭動線分析</p>
+          </div>
+        </div>
+        <button onclick="toggleHotelModal(false)" class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-slate-600 bg-white hover:bg-slate-100 rounded-full shadow-sm transition-colors">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="p-6 overflow-y-auto custom-scrollbar space-y-6">
+        
+        <!-- Side-by-side Hotel Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          
+          <!-- Thai Akara -->
+          <div class="border border-indigo-100 bg-indigo-50/30 rounded-2xl p-4 flex flex-col">
+            <div class="flex items-center gap-2 mb-3">
+              <span class="w-3 h-3 rounded-full bg-indigo-600 block"></span>
+              <h4 class="font-black text-indigo-900 text-sm">Thai Akara - Lanna Boutique</h4>
+            </div>
+            <div class="space-y-3 text-xs flex-1">
+              <div>
+                <span class="font-extrabold text-slate-800 flex items-center gap-1.5"><i class="fa-solid fa-water-ladder text-indigo-500"></i> 戶外中庭採光大泳池</span>
+                <p class="text-slate-600 mt-1 leading-relaxed">正中央擁有開放式純白莊園泳池，採光極佳，四周圍繞綠植與日光浴躺椅，水質清澈，長輩下午曬太陽或年輕人游泳都非常舒服放鬆。</p>
+              </div>
+              <div>
+                <span class="font-extrabold text-slate-800 flex items-center gap-1.5"><i class="fa-solid fa-utensils text-indigo-500"></i> 池畔現做熱食自助早餐</span>
+                <p class="text-slate-600 mt-1 leading-relaxed">半露天池畔餐廳提供現煮泰式熱湯麵、現做歐姆蛋、新鮮熱帶水果優格及麵包，品項多元豐富，非常合長輩與小孩的胃口。</p>
+              </div>
+              <div>
+                <span class="font-extrabold text-slate-800 flex items-center gap-1.5"><i class="fa-solid fa-person-walking text-indigo-500"></i> 2/21 週日夜市完美優勢</span>
+                <p class="text-slate-600 mt-1 leading-relaxed">散步 3–5 分鐘直達夜市主街！8 人出遊若長輩想先回房休息、其他人繼續逛街吃小吃，完全不需搭車叫 Grab，隨時可自由拆組走路回房。</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- THEE Vijit Lanna -->
+          <div class="border border-teal-100 bg-teal-50/30 rounded-2xl p-4 flex flex-col">
+            <div class="flex items-center gap-2 mb-3">
+              <span class="w-3 h-3 rounded-full bg-teal-600 block"></span>
+              <h4 class="font-black text-teal-900 text-sm">THEE Vijit Lanna</h4>
+            </div>
+            <div class="space-y-3 text-xs flex-1">
+              <div>
+                <span class="font-extrabold text-slate-800 flex items-center gap-1.5"><i class="fa-solid fa-leaf text-teal-500"></i> 天井植生綠牆網美泳池</span>
+                <p class="text-slate-600 mt-1 leading-relaxed">壯觀的垂直植被綠牆貫穿天井，深色石材水池搭配精緻光影，極具設計感與打卡視覺張力，更有直通泳池的專屬房型。</p>
+              </div>
+              <div>
+                <span class="font-extrabold text-slate-800 flex items-center gap-1.5"><i class="fa-solid fa-mug-hot text-teal-500"></i> 法式美學精緻單點早餐</span>
+                <p class="text-slate-600 mt-1 leading-relaxed">精美法式單點早午餐盤（A la Carte），擺盤講究如精品咖啡館，現烤牛角可頌、法式吐司與特調精品冷熱飲。</p>
+              </div>
+              <div>
+                <span class="font-extrabold text-slate-800 flex items-center gap-1.5"><i class="fa-solid fa-basket-shopping text-teal-500"></i> 市場與平河河濱優勢</span>
+                <p class="text-slate-600 mt-1 leading-relaxed">出飯店往東可輕鬆散步到傳統瓦洛洛市場買伴手禮、逛長康路觀光夜市，或在平河河畔景觀餐廳享受微風浪漫晚餐。</p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- 8-Person Family Summary Recommendation -->
+        <div class="bg-amber-50/80 rounded-2xl p-4 border border-amber-200/80">
+          <h4 class="font-extrabold text-amber-900 text-sm mb-1.5 flex items-center gap-2">
+            <i class="fa-solid fa-lightbulb text-amber-600"></i> 8人家族同行綜合考量建議
+          </h4>
+          <p class="text-xs text-amber-950 leading-relaxed">
+            如果家族成員有長輩、或是第一次拜訪清邁，<strong>Thai Akara</strong> 的古城核心地理位置無可替代，尤其遇到 2/21 週日夜市的大人潮時，隨時可自由步行返回飯店；若家族成員年輕居多、特別熱愛逛在地傳統市場買零食與河邊夜生活，<strong>THEE Vijit</strong> 則擁有極佳的打卡氛圍與東側生活便利性。
+          </p>
+        </div>
+
+      </div>
+
+      <div class="px-6 py-3.5 bg-slate-50 border-t border-slate-100 flex justify-end">
+        <button onclick="toggleHotelModal(false)" class="px-5 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-xl text-xs font-bold transition-colors">
+          關閉說明
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Share & Line Clipboard Modal -->
+  <div id="share-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[1000] hidden flex items-center justify-center p-4 opacity-0 transition-opacity duration-300">
+    <div class="bg-white rounded-3xl w-full max-w-md shadow-2xl transform scale-95 transition-transform duration-300 overflow-hidden" id="share-modal-content">
+      <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50">
+        <h3 class="font-extrabold text-slate-800 text-base flex items-center gap-2">
+          <i class="fa-solid fa-share-nodes text-indigo-500"></i> 分享旅遊地圖與筆記
+        </h3>
+        <button onclick="toggleShareModal(false)" class="text-slate-400 hover:text-slate-600 bg-white p-1 rounded-full shadow-sm">
+          <i class="fa-solid fa-xmark text-sm"></i>
+        </button>
+      </div>
+      <div class="p-6 space-y-4">
+        <div class="bg-indigo-50/70 p-4 rounded-2xl border border-indigo-100">
+          <h4 class="text-xs font-extrabold text-indigo-900 mb-1.5">一鍵複製行程與評估摘要 (適合發 LINE 群)</h4>
+          <p class="text-xs text-slate-600 mb-3 leading-relaxed">
+            已經整理好兩間飯店設施（泳池、早餐）、35個周邊熱點（週日夜市、米其林美食、SPA與車站）的步行/車程對照，直接複製分享給家人表決！
+          </p>
+          <button onclick="copyToClipboard()" id="copy-btn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 rounded-xl text-xs transition-colors flex items-center justify-center gap-2 shadow-md shadow-indigo-200 active:scale-95">
+            <i class="fa-regular fa-copy"></i> 複製整理筆記文字
+          </button>
+        </div>
+
+        <div class="text-[11px] text-slate-500 bg-slate-50 p-3 rounded-xl border border-slate-100">
+          💡 <strong>小撇步：</strong>您可以將這份 HTML 檔案直接傳到 LINE 聊天室，或透過免費的 Netlify Drop 拖曳上傳產生專屬線上連結，全體家人用手機點開即可操作！
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="fixed top-5 inset-x-0 mx-auto w-fit z-[1100] px-4 py-2.5 rounded-2xl bg-slate-900/90 text-white text-xs font-bold shadow-2xl backdrop-blur-md hidden transition-all"></div>
+
+  <script>
+    // Global State
+    let map;
+    let markersLayer = L.layerGroup();
+    let routeLayer = L.layerGroup();
+    let circlesLayer = L.layerGroup();
+    let sundayLayer = L.layerGroup();
+    
+    let activeCategory = 'all';
+    let activeSphere = 'all';
+    let rangeCirclesVisible = true;
+    let poiMarkersMap = {}; 
+
+    // Category Visual Configuration
+    const categoryConfig = {
+      massage: { label: '按摩SPA', color: '#059669', icon: 'fa-spa', bg: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
+      market: { label: '夜市市集', color: '#9333EA', icon: 'fa-shop', bg: 'bg-purple-50 text-purple-700 border-purple-200' },
+      sight: { label: '寺廟名勝', color: '#E11D48', icon: 'fa-landmark', bg: 'bg-rose-50 text-rose-700 border-rose-200' },
+      photo: { label: '拍照打卡', color: '#DB2777', icon: 'fa-camera-retro', bg: 'bg-pink-50 text-pink-700 border-pink-200' },
+      food: { label: '特色美食', color: '#D97706', icon: 'fa-utensils', bg: 'bg-amber-50 text-amber-800 border-amber-200' },
+      cafe: { label: '咖啡早午餐', color: '#0284C7', icon: 'fa-mug-saucer', bg: 'bg-sky-50 text-sky-700 border-sky-200' },
+      transport: { label: '交通車站', color: '#2563EB', icon: 'fa-bus', bg: 'bg-blue-50 text-blue-700 border-blue-200' }
+    };
+
+    // Hotel Data
+    const HOTELS = {
+      thai_akara: {
+        id: 'thai_akara',
+        name: 'Thai Akara - Lanna Boutique',
+        zhName: '泰阿卡拉蘭納精品飯店',
+        coords: [18.7904, 98.9915],
+        desc: '位於古城中心，採光莊園大泳池、池畔豐富早餐、步出巷口3分達知名按摩，去週日夜市最輕鬆。'
+      },
+      thee_vijit: {
+        id: 'thee_vijit',
+        name: 'THEE Vijit Lanna',
+        zhName: '維吉特蘭納提飯店',
+        coords: [18.7925, 98.9950],
+        desc: '位於護城河畔，天井綠植打卡泳池、法式精品單點早餐，往東去瓦洛洛市場與河濱餐廳非常方便。'
+      }
+    };
+
+    // Full Comprehensive POI Database (35+ Points across all essential categories)
+    const POIS = [
+      // 💆 按摩 SPA (5)
+      { id: 'lila_massage', name: 'Lila Thai Massage (女子監獄前員工)', category: 'massage', tag: '平價名店', coords: [18.7895, 98.9890], walkThai: { time: '🚶 3 分鐘', dist: '250m' }, walkThee: { time: '🚶 11 分鐘', dist: '850m' }, highlight: '性價比極高，手法純熟，Thai Akara 巷口走出來就到。', sphere: ['akara'] },
+      { id: 'fah_lanna_spa', name: 'Fah Lanna Spa (古城旗艦店)', category: 'massage', tag: '頂級竹林', coords: [18.7920, 98.9855], walkThai: { time: '🚶 7 分鐘', dist: '600m' }, walkThee: { time: '🚶 15 分鐘', dist: '1.2km' }, highlight: '電影《泰囧》取景地，環境如人間仙境，精油芳療極佳。', sphere: ['akara'] },
+      { id: 'sense_garden_spa', name: 'Sense Garden Massage', category: 'massage', tag: '靜巷質感', coords: [18.7940, 98.9965], walkThai: { time: '🚶 10 分鐘', dist: '800m' }, walkThee: { time: '🚶 2 分鐘', dist: '150m' }, highlight: 'THEE 旁的庭園水療，Google高評價，環境清幽舒服。', sphere: ['thee'] },
+      { id: 'makkha_spa', name: 'Makkha Health & Spa (Colonial Gardens)', category: 'massage', tag: '殖民莊園', coords: [18.7860, 98.9840], walkThai: { time: '🚶 12 分鐘', dist: '900m' }, walkThee: { time: '🚗 6 分鐘', dist: '1.8km' }, highlight: '純白殖民洋房風格，迎賓與結束贈送特製芒果糯米飯。', sphere: ['akara'] },
+      { id: 'oasis_spa', name: 'Oasis Spa (綠洲水療 帕辛店)', category: 'massage', tag: '貴婦首選', coords: [18.7885, 98.9790], walkThai: { time: '🚶 15 分鐘', dist: '1.2km' }, walkThee: { time: '🚗 8 分鐘', dist: '2.3km' }, highlight: '清邁殿堂級紅毛丹四手按摩，庭園流水鳥語花香。', sphere: ['akara'] },
+
+      // 🌙 夜市與市集 (6)
+      { id: 'sunday_market', name: '清邁週日夜市 Sunday Walking Street', category: 'market', tag: '2/21重點', coords: [18.7878, 98.9890], walkThai: { time: '🚶 4 分鐘', dist: '350m' }, walkThee: { time: '🚶 10 分鐘', dist: '800m' }, highlight: '從塔佩門橫貫古城，手工藝品、平價小吃應有盡有！Akara步行即達隨時可回房。', sphere: ['akara'] },
+      { id: 'saturday_market', name: '週六夜市 Saturday Market (Wua Lai Rd)', category: 'market', tag: '銀器街', coords: [18.7792, 98.9840], walkThai: { time: '🚗 5 分鐘', dist: '1.6km' }, walkThee: { time: '🚗 6 分鐘', dist: '2.0km' }, highlight: '古城南門外的銀飾街，週六下午五點開始封街擺攤。', sphere: ['akara'] },
+      { id: 'warorot', name: '瓦洛洛市場 Warorot Market (Kad Luang)', category: 'market', tag: '在地市場', coords: [18.7900, 99.0003], walkThai: { time: '🚶 14 分鐘', dist: '1.1km' }, walkThee: { time: '🚶 10 分鐘', dist: '800m' }, highlight: '買泰北香腸、炸豬皮、水果乾與伴手禮首選，THEE過去非常近。', sphere: ['thee'] },
+      { id: 'night_bazaar', name: '長康路觀光夜市 Chiang Mai Night Bazaar', category: 'market', tag: '每日營業', coords: [18.7850, 99.0003], walkThai: { time: '🚶 18 分鐘', dist: '1.4km' }, walkThee: { time: '🚶 13 分鐘', dist: '1.1km' }, highlight: '天天都有營業的大型觀光夜市，按摩店與攤位林立。', sphere: ['thee'] },
+      { id: 'ploen_ruedee', name: '草垛草地夜市 Ploen Ruedee Night Market', category: 'market', tag: '現場Live', coords: [18.7872, 99.0000], walkThai: { time: '🚶 15 分鐘', dist: '1.2km' }, walkThee: { time: '🚶 10 分鐘', dist: '850m' }, highlight: '異國美食廣場＋現場樂團Live演唱，氣氛年輕放鬆。', sphere: ['thee'] },
+      { id: 'chang_phuak_food', name: '昌卜克北門夜市 Chang Phuak Gate', category: 'market', tag: '鳳飛飛豬腳', coords: [18.7958, 98.9860], walkThai: { time: '🚶 12 分鐘', dist: '950m' }, walkThee: { time: '🚶 14 分鐘', dist: '1.1km' }, highlight: '古城北門美食熱炒街，知名戴牛仔帽的鳳飛飛豬腳飯在此。', sphere: ['akara', 'thee'] },
+
+      // 🏯 寺廟歷史名勝 (6)
+      { id: 'tha_phae', name: '塔佩門 Tha Phae Gate', category: 'sight', tag: '清邁門面', coords: [18.7877, 98.9931], walkThai: { time: '🚶 6 分鐘', dist: '500m' }, walkThee: { time: '🚶 6 分鐘', dist: '550m' }, highlight: '紅磚城牆與紅磚廣場，週日夜市起點，兩家飯店徒步均等。', sphere: ['akara', 'thee'] },
+      { id: 'wat_chedi_luang', name: '柴迪隆寺 Wat Chedi Luang', category: 'sight', tag: '大佛塔遺蹟', coords: [18.7870, 98.9865], walkThai: { time: '🚶 9 分鐘', dist: '700m' }, walkThee: { time: '🚶 15 分鐘', dist: '1.3km' }, highlight: '六百多年歷史的宏偉地震佛塔，古城最震撼的寺廟建築。', sphere: ['akara'] },
+      { id: 'wat_phra_singh', name: '帕辛寺 Wat Phra Singh', category: 'sight', tag: '地位崇高', coords: [18.7884, 98.9814], walkThai: { time: '🚶 12 分鐘', dist: '1.0km' }, walkThee: { time: '🚶 18 分鐘', dist: '1.6km' }, highlight: '金色佛塔巍峨壯麗，清邁香火最鼎盛的一級皇家寺院。', sphere: ['akara'] },
+      { id: 'wat_chiang_man', name: '清曼寺 Wat Chiang Man', category: 'sight', tag: '最古老寺廟', coords: [18.7938, 98.9892], walkThai: { time: '🚶 5 分鐘', dist: '400m' }, walkThee: { time: '🚶 9 分鐘', dist: '750m' }, highlight: '15隻石雕大象馱起的大象佛塔，適合清晨散步拍照。', sphere: ['akara'] },
+      { id: 'wat_lok_moli', name: '羅摩利寺 Wat Lok Moli', category: 'sight', tag: '黑古寺', coords: [18.7960, 98.9825], walkThai: { time: '🚶 14 分鐘', dist: '1.2km' }, walkThee: { time: '🚶 16 分鐘', dist: '1.4km' }, highlight: '古城北門護城河外，保留古樸深色蘭納木造與大佛塔。', sphere: ['akara'] },
+      { id: 'wat_sri_suphan', name: '素攀寺 Wat Sri Suphan (純銀戒堂)', category: 'sight', tag: '純銀打造', coords: [18.7785, 98.9830], walkThai: { time: '🚗 5 分鐘', dist: '1.7km' }, walkThee: { time: '🚗 6 分鐘', dist: '2.1km' }, highlight: '全手工銀雕工藝寺廟，夜間點燈時銀光閃爍非常震撼。', sphere: ['akara'] },
+
+      // 📸 拍照打卡點 (4)
+      { id: 'three_kings', name: '三王紀念碑廣場 Three Kings Monument', category: 'photo', tag: '古城地標', coords: [18.7899, 98.9875], walkThai: { time: '🚶 5 分鐘', dist: '450m' }, walkThee: { time: '🚶 12 分鐘', dist: '950m' }, highlight: '清邁建城三位先驅國王雕像，周邊常有戶外文化展覽。', sphere: ['akara'] },
+      { id: 'kalm_village', name: 'Kalm Village 清邁工藝美學園區', category: 'photo', tag: '文青必拍', coords: [18.7865, 98.9880], walkThai: { time: '🚶 8 分鐘', dist: '650m' }, walkThee: { time: '🚶 14 分鐘', dist: '1.2km' }, highlight: '當代蘭納木造建築、展覽、手作選品與觀景天台，拍照極美。', sphere: ['akara'] },
+      { id: 'clay_studio', name: 'Clay Studio Coffee in the Garden', category: 'photo', tag: '吳哥窟綠境', coords: [18.7845, 98.9882], walkThai: { time: '🚶 10 分鐘', dist: '800m' }, walkThee: { time: '🚶 15 分鐘', dist: '1.3km' }, highlight: '庭園中矗立著許多仿古佛頭與青苔雕塑，彷彿置身秘境森林。', sphere: ['akara'] },
+      { id: 'khlong_mae_kha', name: '湄卡運河 Khlong Mae Kha', category: 'photo', tag: '清邁小樽', coords: [18.7770, 98.9970], walkThai: { time: '🚗 6 分鐘', dist: '2.0km' }, walkThee: { time: '🚗 5 分鐘', dist: '1.8km' }, highlight: '日式運河小橋流水風格彩繪商街，傍晚亮燈後拍照極佳。', sphere: ['thee'] },
+
+      // 🍽️ 特色美食與餐廳 (6)
+      { id: 'house_by_ginger', name: 'The House by Ginger', category: 'food', tag: '米其林推薦', coords: [18.7905, 98.9935], walkThai: { time: '🚶 3 分鐘', dist: '250m' }, walkThee: { time: '🚶 3 分鐘', dist: '250m' }, highlight: '華麗復古南洋裝潢，精緻泰北菜與調酒，8人家族聚餐首選！兩家飯店正中間。', sphere: ['akara', 'thee'] },
+      { id: 'good_kitchen', name: 'The Good Kitchen', category: 'food', tag: '平價泰菜', coords: [18.7930, 98.9940], walkThai: { time: '🚶 5 分鐘', dist: '400m' }, walkThee: { time: '🚶 1 分鐘', dist: '80m' }, highlight: '出THEE巷口即達，平價份量足、打拋豬與冬蔭功極具口碑。', sphere: ['thee'] },
+      { id: 'aroy_dee', name: 'Aroy Dee', category: 'food', tag: '在地熱炒', coords: [18.7915, 98.9935], walkThai: { time: '🚶 4 分鐘', dist: '300m' }, walkThee: { time: '🚶 3 分鐘', dist: '250m' }, highlight: '超高CP值路邊熱炒名店，炒河粉、芒果糯米飯隨時吃。', sphere: ['akara', 'thee'] },
+      { id: 'sp_chicken', name: 'SP Chicken 旋轉炭烤烤雞', category: 'food', tag: '排隊名店', coords: [18.7880, 98.9805], walkThai: { time: '🚶 13 分鐘', dist: '1.1km' }, walkThee: { time: '🚗 7 分鐘', dist: '2.1km' }, highlight: '塞滿香料的獨門烤全雞皮脆肉嫩，沾特製泰式辣醬一絕。', sphere: ['akara'] },
+      { id: 'khao_soi_khun_yai', name: 'Khao Soi Khun Yai (姥姥泰北咖哩麵)', category: 'food', tag: '傳統咖哩麵', coords: [18.7962, 98.9840], walkThai: { time: '🚶 13 分鐘', dist: '1.0km' }, walkThee: { time: '🚶 15 分鐘', dist: '1.3km' }, highlight: '清邁最頂級美味的牛肉/雞腿金麵，湯頭濃郁椰香四溢。', sphere: ['akara'] },
+      { id: 'the_good_view', name: 'The Good View Bar & Restaurant', category: 'food', tag: '平河河畔景觀', coords: [18.7915, 99.0040], walkThai: { time: '🚗 5 分鐘', dist: '1.6km' }, walkThee: { time: '🚶 12 分鐘', dist: '950m' }, highlight: '平河畔老牌景觀餐廳，河風徐徐＋現場駐唱，THEE散步即達。', sphere: ['thee'] },
+
+      // ☕ 咖啡甜點早午餐 (5)
+      { id: 'improvise_coffee', name: 'Improvise Coffee II', category: 'cafe', tag: '精品手沖', coords: [18.7902, 98.9912], walkThai: { time: '🚶 1 分鐘', dist: '60m' }, walkThee: { time: '🚶 6 分鐘', dist: '450m' }, highlight: '泰阿卡拉飯店出門轉彎就到，年輕成員自由活動的質感角落。', sphere: ['akara'] },
+      { id: 'the_hideout', name: 'The Hideout', category: 'cafe', tag: '大份量早午餐', coords: [18.7935, 98.9925], walkThai: { time: '🚶 5 分鐘', dist: '400m' }, walkThee: { time: '🚶 4 分鐘', dist: '300m' }, highlight: '爆漿起司牛肉三明治、新鮮果汁，歐美旅客大推的隱藏早午餐。', sphere: ['thee', 'akara'] },
+      { id: 'bagel_house', name: 'Bagel House Cafe', category: 'cafe', tag: '現烤貝果', coords: [18.7910, 98.9940], walkThai: { time: '🚶 4 分鐘', dist: '300m' }, walkThee: { time: '🚶 3 分鐘', dist: '250m' }, highlight: '現烤嚼勁貝果搭配多種乳酪抹醬，氣氛休閒舒適。', sphere: ['akara', 'thee'] },
+      { id: 'fern_forest', name: 'Fern Forest Cafe 蕨類森林咖啡', category: 'cafe', tag: '綠意花園', coords: [18.7925, 98.9845], walkThai: { time: '🚶 8 分鐘', dist: '700m' }, walkThee: { time: '🚶 15 分鐘', dist: '1.2km' }, highlight: '彷彿走入童話森林庭園，自製椰子派與拿鐵非常出名。', sphere: ['akara'] },
+      { id: 'graph_contemporary', name: 'GRAPH Contemporary', category: 'cafe', tag: '法式復古工業', coords: [18.7880, 99.0020], walkThai: { time: '🚶 16 分鐘', dist: '1.3km' }, walkThee: { time: '🚶 11 分鐘', dist: '900m' }, highlight: '平河畔超人氣美學咖啡館，招牌特調氮氣咖啡與復古家具。', sphere: ['thee'] },
+
+      // 🚗 交通車站與樞紐 (5)
+      { id: 'tha_phae_station', name: '塔佩門雙條車 / Tuk-Tuk 排班樞紐', category: 'transport', tag: '叫車最快', coords: [18.7875, 98.9935], walkThai: { time: '🚶 6 分鐘', dist: '500m' }, walkThee: { time: '🚶 6 分鐘', dist: '550m' }, highlight: '古城外圍最大紅色雙條車隨招隨搭點，8人包車去素帖山最方便。', sphere: ['akara', 'thee', 'transport'] },
+      { id: 'cnx_airport', name: '清邁國際機場 (CNX Airport)', category: 'transport', tag: '國際機場', coords: [18.7678, 98.9640], walkThai: { time: '🚗 12 分鐘', dist: '4.8km' }, walkThee: { time: '🚗 15 分鐘', dist: '5.8km' }, highlight: '市區到機場距離近，8人建議提前叫 2 台 Grab 或飯店接送。', sphere: ['transport'] },
+      { id: 'railway_station', name: '清邁火車站 (Chiang Mai Railway Station)', category: 'transport', tag: '鐵路總站', coords: [18.7860, 99.0165], walkThai: { time: '🚗 10 分鐘', dist: '3.5km' }, walkThee: { time: '🚗 8 分鐘', dist: '2.7km' }, highlight: '搭乘臥鋪夜車往返曼谷的端點站，THEE 往東過河更接近。', sphere: ['transport'] },
+      { id: 'arcade_bus', name: '阿卡客運轉運站 (Arcade Bus Terminal 2/3)', category: 'transport', tag: '長途客運', coords: [18.8005, 99.0180], walkThai: { time: '🚗 12 分鐘', dist: '4.2km' }, walkThee: { time: '🚗 9 分鐘', dist: '3.2km' }, highlight: '前往清萊白廟、拜縣 (Pai) 的 Green Bus 豪華長途客運搭乘處。', sphere: ['transport'] },
+      { id: 'chang_phuak_bus', name: '昌卜克公車站 (Chang Phuak Bus Station)', category: 'transport', tag: '郊區短途', coords: [18.7985, 98.9865], walkThai: { time: '🚗 5 分鐘', dist: '1.4km' }, walkThee: { time: '🚗 5 分鐘', dist: '1.5km' }, highlight: '前往古城北郊、清道、美旺大象營短途橘色/黃色雙條班車發車站。', sphere: ['transport'] }
+    ];
+
+    function initMap() {
+      // Create Leaflet Map Instance
+      map = L.map('map', {
+        center: [18.7905, 98.9930],
+        zoom: 15,
+        zoomControl: false
+      });
+
+      L.control.zoom({ position: 'topright' }).addTo(map);
+
+      // Clean, High-Contrast Carto Voyager Tile Layer
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; OSM & CARTO',
+        maxZoom: 19
+      }).addTo(map);
+
+      // Add Map Layers
+      circlesLayer.addTo(map);
+      sundayLayer.addTo(map);
+      routeLayer.addTo(map);
+      markersLayer.addTo(map);
+
+      renderHotels();
+      renderPOIs();
+      renderSundayPath();
+
+      // Fit map initially to include core sights
+      fitAllPOIBounds(false);
+
+      window.addEventListener('resize', () => map.invalidateSize());
+
+      // Search and Filter Bindings
+      document.getElementById('search-input').addEventListener('input', applyFilters);
+
+      // Initial Filter & Sidebar Render
+      applyFilters();
+    }
+
+    // Smart Bounds Calculation with generous right/bottom padding
+    function fitAllPOIBounds(animate = true) {
+      if (!map) return;
+      
+      const allCoords = [
+        HOTELS.thai_akara.coords,
+        HOTELS.thee_vijit.coords,
+        ...POIS.map(p => p.coords)
+      ];
+      const bounds = L.latLngBounds(allCoords);
+      const isMobile = window.innerWidth < 1024;
+      
+      map.fitBounds(bounds, {
+        paddingTopLeft: [isMobile ? 40 : 60, isMobile ? 40 : 70],
+        paddingBottomRight: [isMobile ? 40 : 120, isMobile ? 120 : 80],
+        maxZoom: 15.5,
+        animate: animate
+      });
+      
+      clearDistanceHUD();
+    }
+
+    // Hotel Custom DivIcon with Distinctive Pulsing Ring
+    function createHotelIcon(hotelKey) {
+      const isAkara = hotelKey === 'thai_akara';
+      const color = isAkara ? '#4F46E5' : '#0D9488';
+      const label = isAkara ? 'Thai Akara' : 'THEE Vijit';
+      const pulseClass = isAkara ? 'hotel-pulse-akara' : 'hotel-pulse-thee';
+
+      const html = `
+        <div class="relative flex items-center justify-center -m-2.5 p-2.5 pointer-events-auto">
+          <div class="absolute w-12 h-12 rounded-full ${pulseClass}" style="background-color: ${color}; opacity: 0.35;"></div>
+          <div class="relative z-10 w-9 h-9 rounded-2xl flex items-center justify-center text-white shadow-2xl border-2 border-white text-sm font-black cursor-pointer hover:scale-110 transition-transform" style="background-color: ${color};">
+            <i class="fa-solid fa-hotel"></i>
+          </div>
+          <div class="absolute -bottom-6 px-2 py-0.5 rounded-lg text-[10px] font-black tracking-tight whitespace-nowrap bg-white/95 text-slate-800 shadow-md border border-slate-200 pointer-events-none">
+            ${label}
+          </div>
+        </div>
+      `;
+      return L.divIcon({
+        className: 'hotel-custom-pin',
+        html: html,
+        iconSize: [42, 42],
+        iconAnchor: [21, 21],
+        popupAnchor: [0, -22]
+      });
+    }
+
+    // POI Custom DivIcon with Category Color and Icon
+    function createPOIIcon(category, isSelected = false, faded = false) {
+      const cfg = categoryConfig[category] || categoryConfig.sight;
+      const border = isSelected ? 'ring-4 ring-amber-400 scale-125 z-[500]' : 'ring-2 ring-white hover:scale-110';
+      const opacity = faded ? 'opacity-35 scale-90' : 'opacity-100';
+
+      const html = `
+        <div class="relative flex items-center justify-center -m-3 p-3 pointer-events-auto transition-all duration-300 ${opacity}">
+          <div class="w-7 h-7 rounded-xl flex items-center justify-center text-white shadow-lg ${border}" style="background-color: ${cfg.color};">
+            <i class="fa-solid ${cfg.icon} text-[11px]"></i>
+          </div>
+        </div>
+      `;
+      return L.divIcon({
+        className: 'poi-custom-pin',
+        html: html,
+        iconSize: [46, 46],
+        iconAnchor: [23, 23],
+        popupAnchor: [0, -20]
+      });
+    }
+
+    function renderHotels() {
+      // 1. Thai Akara
+      const akara = HOTELS.thai_akara;
+      const akaraMarker = L.marker(akara.coords, { icon: createHotelIcon('thai_akara'), zIndexOffset: 1000 }).addTo(markersLayer);
+      akaraMarker.bindPopup(`
+        <div class="font-sans text-xs w-[240px]">
+          <div class="font-black text-indigo-700 text-sm flex items-center gap-1.5">
+            <i class="fa-solid fa-hotel text-amber-500"></i> ${akara.zhName}
+          </div>
+          <div class="text-[11px] text-slate-500 mt-0.5">${akara.name}</div>
+          <div class="mt-2.5 p-2.5 bg-indigo-50/80 rounded-xl text-indigo-950 text-[11px] space-y-1.5 border border-indigo-100/70">
+            <div class="flex items-start gap-1"><span class="shrink-0">🏊</span> <span><strong>中庭採光大泳池：</strong>純白莊園環繞、採光佳、舒適躺椅</span></div>
+            <div class="flex items-start gap-1"><span class="shrink-0">🍳</span> <span><strong>池畔現做熱食早餐：</strong>熱湯麵、現煮歐姆蛋、豐富水果</span></div>
+            <div class="flex items-start gap-1"><span class="shrink-0">🚶</span> <span><strong>週日夜市首選：</strong>步行 3 分鐘進主街，隨時回房無壓力</span></div>
+          </div>
+        </div>
+      `);
+
+      L.circle(akara.coords, {
+        radius: 450, color: '#4F46E5', fillColor: '#4F46E5', fillOpacity: 0.05, weight: 1.5, dashArray: '4, 4', interactive: false
+      }).addTo(circlesLayer);
+
+      // 2. THEE Vijit Lanna
+      const thee = HOTELS.thee_vijit;
+      const theeMarker = L.marker(thee.coords, { icon: createHotelIcon('thee_vijit'), zIndexOffset: 1000 }).addTo(markersLayer);
+      theeMarker.bindPopup(`
+        <div class="font-sans text-xs w-[240px]">
+          <div class="font-black text-teal-700 text-sm flex items-center gap-1.5">
+            <i class="fa-solid fa-hotel text-teal-500"></i> ${thee.zhName}
+          </div>
+          <div class="text-[11px] text-slate-500 mt-0.5">${thee.name}</div>
+          <div class="mt-2.5 p-2.5 bg-teal-50/80 rounded-xl text-teal-950 text-[11px] space-y-1.5 border border-teal-100/70">
+            <div class="flex items-start gap-1"><span class="shrink-0">🌿</span> <span><strong>天井垂直綠牆泳池：</strong>深色池底、綠植環繞打卡極美</span></div>
+            <div class="flex items-start gap-1"><span class="shrink-0">🥐</span> <span><strong>法式單點精緻早餐：</strong>法式吐司、精品可頌與特調飲品</span></div>
+            <div class="flex items-start gap-1"><span class="shrink-0">🧺</span> <span><strong>市場河濱優勢：</strong>輕鬆逛瓦洛洛、長康夜市與河畔景觀</span></div>
+          </div>
+        </div>
+      `);
+
+      L.circle(thee.coords, {
+        radius: 450, color: '#0D9488', fillColor: '#0D9488', fillOpacity: 0.05, weight: 1.5, dashArray: '4, 4', interactive: false
+      }).addTo(circlesLayer);
+    }
+
+    function renderSundayPath() {
+      // Highlight Sunday Walking Street from Tha Phae Gate straight down Ratchadamnoen Road to Wat Phra Singh
+      const sundayCoords = [
+        [18.7877, 98.9931], // Tha Phae Gate
+        [18.7878, 98.9890], // Ratchadamnoen & Phra Pok Klao intersection
+        [18.7884, 98.9814]  // Wat Phra Singh terminus
+      ];
+
+      L.polyline(sundayCoords, {
+        color: '#F59E0B', weight: 6, opacity: 0.85, dashArray: '8, 8', interactive: false
+      }).addTo(sundayLayer);
+    }
+
+    function renderPOIs() {
+      Object.values(poiMarkersMap).forEach(marker => markersLayer.removeLayer(marker));
+      poiMarkersMap = {};
+
+      POIS.forEach(poi => {
+        const marker = L.marker(poi.coords, {
+          icon: createPOIIcon(poi.category)
+        }).addTo(markersLayer);
+
+        marker.on('click', () => {
+          selectPOI(poi.id, true);
+        });
+
+        const cfg = categoryConfig[poi.category];
+        marker.bindPopup(`
+          <div class="font-sans text-xs max-w-[220px]">
+            <span class="inline-block px-2 py-0.5 rounded-md text-[10px] font-bold text-white mb-1 shadow-sm" style="background-color: ${cfg.color};">
+              ${cfg.label}
+            </span>
+            <div class="font-extrabold text-slate-900 text-sm mt-0.5">${poi.name}</div>
+            <p class="text-slate-600 text-[11px] mt-1.5 leading-relaxed">${poi.highlight}</p>
+          </div>
+        `, { autoPan: false });
+
+        poiMarkersMap[poi.id] = marker;
+      });
+    }
+
+    function applyFilters() {
+      const query = document.getElementById('search-input').value.toLowerCase().trim();
+      const clearBtn = document.getElementById('clear-search');
+      clearBtn.classList.toggle('hidden', query.length === 0);
+
+      const filtered = POIS.filter(poi => {
+        const matchCat = activeCategory === 'all' || poi.category === activeCategory;
+        const matchSphere = activeSphere === 'all' || poi.sphere.includes(activeSphere);
+        const matchQuery = poi.name.toLowerCase().includes(query) || 
+                           poi.highlight.toLowerCase().includes(query) || 
+                           poi.tag.toLowerCase().includes(query) ||
+                           (categoryConfig[poi.category] && categoryConfig[poi.category].label.includes(query));
+        return matchCat && matchSphere && matchQuery;
+      });
+
+      // Update Map Marker Opacity
+      POIS.forEach(poi => {
+        const marker = poiMarkersMap[poi.id];
+        const isMatch = filtered.includes(poi);
+        if (marker) {
+          marker.setIcon(createPOIIcon(poi.category, false, !isMatch));
+          if (!isMatch) marker.closePopup();
+        }
+      });
+
+      renderSidebarList(filtered);
+      document.getElementById('poi-count-badge').innerText = filtered.length;
+    }
+
+    function renderSidebarList(filteredPOIs) {
+      const container = document.getElementById('poi-list-container');
+      container.innerHTML = '';
+
+      if (filteredPOIs.length === 0) {
+        container.innerHTML = `
+          <div class="text-center py-12 text-slate-400">
+            <i class="fa-solid fa-compass text-4xl mb-3 opacity-40"></i>
+            <p class="text-xs font-bold">沒有找到符合條件的地點</p>
+            <p class="text-[11px] mt-1 text-slate-400">嘗試輸入其他關鍵字或變更分類</p>
+            <button onclick="clearSearch(); setCategoryFilter('all'); setLifeSphere('all');" class="mt-3 text-indigo-600 font-bold text-xs hover:underline">重設所有條件</button>
+          </div>
+        `;
+        return;
+      }
+
+      filteredPOIs.forEach(poi => {
+        const cfg = categoryConfig[poi.category];
+        const card = document.createElement('div');
+        card.id = `card-${poi.id}`;
+        card.className = 'bg-white rounded-2xl p-3.5 shadow-sm border border-slate-100 hover:shadow-md transition-all cursor-pointer group active:scale-[0.99]';
+        
+        card.innerHTML = `
+          <div class="flex items-start justify-between gap-2.5">
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-1.5 mb-1 flex-wrap">
+                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-extrabold ${cfg.bg} border">
+                  <i class="fa-solid ${cfg.icon} text-[9px]"></i> ${cfg.label}
+                </span>
+                <span class="text-[10px] font-bold text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded">${poi.tag}</span>
+              </div>
+              <h4 class="font-extrabold text-slate-800 text-sm group-hover:text-indigo-600 transition-colors truncate">${poi.name}</h4>
+              <p class="text-xs text-slate-500 mt-1 leading-relaxed line-clamp-2">${poi.highlight}</p>
+            </div>
+            <div class="w-8 h-8 rounded-xl bg-slate-50 flex items-center justify-center shrink-0 border border-slate-100 text-slate-400 group-hover:text-indigo-600 group-hover:bg-indigo-50 transition-colors">
+              <i class="fa-solid fa-location-arrow text-xs"></i>
+            </div>
+          </div>
+          <div class="mt-3 pt-2.5 border-t border-slate-50 grid grid-cols-2 gap-2 text-[10px]">
+            <div class="flex flex-col bg-slate-50/70 p-1.5 rounded-lg">
+              <span class="text-slate-400 font-medium">Thai Akara 出發</span>
+              <span class="font-black text-indigo-700 mt-0.5">${poi.walkThai.time}</span>
+            </div>
+            <div class="flex flex-col bg-slate-50/70 p-1.5 rounded-lg">
+              <span class="text-slate-400 font-medium">THEE Vijit 出發</span>
+              <span class="font-black text-teal-700 mt-0.5">${poi.walkThee.time}</span>
+            </div>
+          </div>
+        `;
+
+        card.addEventListener('click', () => {
+          selectPOI(poi.id, true);
+        });
+
+        container.appendChild(card);
+      });
+    }
+
+    function selectPOI(poiId, panTo = true) {
+      const poi = POIS.find(p => p.id === poiId);
+      if (!poi) return;
+
+      const isMobile = window.innerWidth < 1024;
+      
+      if (panTo) {
+        // Smart Offset: Shift map view slightly south so the target marker rests comfortably higher up on screen.
+        // This guarantees the HUD at the bottom won't block the popup or the pin.
+        const latOffset = isMobile ? 0.0035 : 0.0020;
+        const targetCoords = [poi.coords[0] - latOffset, poi.coords[1]];
+        
+        map.flyTo(targetCoords, 16.2, { animate: true, duration: 0.6 });
+      }
+
+      // Highlight selected marker and fade others
+      POIS.forEach(p => {
+        const m = poiMarkersMap[p.id];
+        if (m) m.setIcon(createPOIIcon(p.category, p.id === poiId, p.id !== poiId));
+      });
+
+      const marker = poiMarkersMap[poiId];
+      if (marker) marker.openPopup();
+
+      // Populate & Show HUD
+      const hud = document.getElementById('distance-hud');
+      const cfg = categoryConfig[poi.category];
+      
+      document.getElementById('hud-icon').innerHTML = `<i class="fa-solid ${cfg.icon}"></i>`;
+      document.getElementById('hud-icon').style.backgroundColor = cfg.color + '20';
+      document.getElementById('hud-icon').style.color = cfg.color;
+      
+      document.getElementById('hud-title').innerText = poi.name;
+      document.getElementById('hud-type').innerText = cfg.label;
+      document.getElementById('hud-type').style.backgroundColor = cfg.color;
+      document.getElementById('hud-tag').innerText = poi.tag;
+      
+      document.getElementById('hud-akara-time').innerText = poi.walkThai.time;
+      document.getElementById('hud-akara-dist').innerText = `距離約 ${poi.walkThai.dist}`;
+      document.getElementById('hud-thee-time').innerText = poi.walkThee.time;
+      document.getElementById('hud-thee-dist').innerText = `距離約 ${poi.walkThee.dist}`;
+      document.getElementById('hud-tip').innerHTML = `<strong>💡 家族同行亮點：</strong>${poi.highlight}`;
+      
+      hud.classList.remove('hidden', 'translate-y-10', 'opacity-0');
+      hud.classList.add('translate-y-0', 'opacity-100');
+
+      // Draw Transit Polyline to Both Hotels
+      routeLayer.clearLayers();
+      L.polyline([poi.coords, HOTELS.thai_akara.coords], { color: '#4F46E5', weight: 4, opacity: 0.85, dashArray: '6, 6', interactive: false }).addTo(routeLayer);
+      L.polyline([poi.coords, HOTELS.thee_vijit.coords], { color: '#0D9488', weight: 4, opacity: 0.85, dashArray: '6, 6', interactive: false }).addTo(routeLayer);
+
+      // Scroll to card in sidebar and highlight
+      document.querySelectorAll('[id^="card-"]').forEach(c => c.classList.remove('ring-2', 'ring-indigo-500'));
+      const activeCard = document.getElementById(`card-${poiId}`);
+      if (activeCard) {
+        activeCard.classList.add('ring-2', 'ring-indigo-500');
+        activeCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+
+      if (isMobile) {
+        toggleSidebar(false);
+      }
+    }
+
+    function clearDistanceHUD() {
+      const hud = document.getElementById('distance-hud');
+      hud.classList.add('hidden', 'translate-y-10', 'opacity-0');
+      routeLayer.clearLayers();
+      map.closePopup();
+      POIS.forEach(p => {
+        const m = poiMarkersMap[p.id];
+        if (m) m.setIcon(createPOIIcon(p.category, false, false));
+      });
+      document.querySelectorAll('[id^="card-"]').forEach(c => c.classList.remove('ring-2', 'ring-indigo-500'));
+    }
+
+    function toggleRangeCircles() {
+      rangeCirclesVisible = !rangeCirclesVisible;
+      const btn = document.getElementById('btn-toggle-ranges');
+      if (rangeCirclesVisible) {
+        map.addLayer(circlesLayer);
+        btn.innerText = '隱藏步行圈';
+      } else {
+        map.removeLayer(circlesLayer);
+        btn.innerText = '顯示步行圈';
+      }
+    }
+
+    function setLifeSphere(sphere) {
+      activeSphere = sphere;
+      document.querySelectorAll('.sphere-tab').forEach(tab => {
+        tab.classList.remove('active', 'bg-white', 'text-slate-900', 'shadow-sm', 'text-indigo-600', 'text-teal-600');
+        tab.classList.add('text-slate-600');
+      });
+      
+      const tabId = `tab-${sphere}`;
+      const activeBtn = document.getElementById(tabId);
+      if (activeBtn) {
+        activeBtn.classList.add('active', 'bg-white', 'text-slate-900', 'shadow-sm');
+        if(sphere === 'akara') activeBtn.classList.add('text-indigo-600');
+        if(sphere === 'thee') activeBtn.classList.add('text-teal-600');
+      }
+
+      clearDistanceHUD();
+      applyFilters();
+
+      if (sphere === 'akara') {
+        map.flyTo(HOTELS.thai_akara.coords, 16.0);
+      } else if (sphere === 'thee') {
+        map.flyTo(HOTELS.thee_vijit.coords, 16.0);
+      } else if (sphere === 'transport') {
+        fitAllPOIBounds(true);
+      } else {
+        fitAllPOIBounds(true);
+      }
+    }
+
+    function setCategoryFilter(cat) {
+      activeCategory = cat;
+      document.querySelectorAll('.cat-filter').forEach(btn => {
+        btn.className = 'cat-filter shrink-0 px-3 py-1.5 rounded-full text-[11px] font-bold bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors';
+      });
+
+      const activeBtn = document.querySelector(`.cat-filter[data-cat="${cat}"]`);
+      if (activeBtn) {
+        activeBtn.className = 'cat-filter active shrink-0 px-3 py-1.5 rounded-full text-[11px] font-bold bg-slate-900 text-white transition-colors';
+      }
+      
+      applyFilters();
+    }
+
+    function clearSearch() {
+      document.getElementById('search-input').value = '';
+      applyFilters();
+    }
+
+    function focusOnHotel(hotelId) {
+      const hotel = HOTELS[hotelId];
+      if (!hotel) return;
+      clearDistanceHUD();
+      map.flyTo(hotel.coords, 16.5, { duration: 0.7 });
+      if (window.innerWidth < 1024) {
+        toggleSidebar(false);
+      }
+    }
+
+    function toggleSidebar(forceState) {
+      const sidebar = document.getElementById('sidebar');
+      const backdrop = document.getElementById('sidebar-backdrop');
+      const mobileBtn = document.getElementById('mobile-floating-btn');
+
+      const shouldOpen = forceState !== undefined ? forceState : sidebar.classList.contains('translate-x-full');
+
+      if (shouldOpen) {
+        sidebar.classList.remove('translate-x-full');
+        if (backdrop) backdrop.classList.remove('hidden');
+        if (mobileBtn) mobileBtn.classList.add('hidden');
+        setTimeout(() => map.invalidateSize(), 300);
+      } else {
+        sidebar.classList.add('translate-x-full');
+        if (backdrop) backdrop.classList.add('hidden');
+        if (mobileBtn) mobileBtn.classList.remove('hidden');
+        setTimeout(() => map.invalidateSize(), 300);
+      }
+    }
+
+    function toggleHotelModal(show) {
+      const modal = document.getElementById('hotel-modal');
+      const content = document.getElementById('hotel-modal-content');
+      if (show) {
+        modal.classList.remove('hidden');
+        void modal.offsetWidth;
+        modal.classList.remove('opacity-0');
+        content.classList.remove('scale-95');
+        content.classList.add('scale-100');
+      } else {
+        modal.classList.add('opacity-0');
+        content.classList.remove('scale-100');
+        content.classList.add('scale-95');
+        setTimeout(() => modal.classList.add('hidden'), 300);
+      }
+    }
+
+    function toggleShareModal(show) {
+      const modal = document.getElementById('share-modal');
+      const content = document.getElementById('share-modal-content');
+      if (show) {
+        modal.classList.remove('hidden');
+        void modal.offsetWidth;
+        modal.classList.remove('opacity-0');
+        content.classList.remove('scale-95');
+        content.classList.add('scale-100');
+      } else {
+        modal.classList.add('opacity-0');
+        content.classList.remove('scale-100');
+        content.classList.add('scale-95');
+        setTimeout(() => modal.classList.add('hidden'), 300);
+      }
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      toast.innerText = message;
+      toast.classList.remove('hidden');
+      setTimeout(() => toast.classList.add('hidden'), 3000);
+    }
+
+    function copyToClipboard() {
+      const text = `🇹🇭 清邁 8 人家族旅遊・雙飯店全生活圈評估筆記 (包含 35 個熱門景點與車站)
+
+🏡 Thai Akara - Lanna Boutique (古城核心型首選)
+📍 地理：古城正中心，去哪都近，極適合長輩與初訪家庭
+🏊 設施：純白莊園採光大泳池、日光浴躺椅、水質清澈
+🍳 早餐：池畔半露天現做熱食（熱湯麵、現煎歐姆蛋、豐富水果）
+💯 核心動線優勢：
+- 走路 3-4 分鐘直達「週日夜市主街」(2/21重點！逛累隨時可回房休息)
+- 走路 3 分鐘到平價優質名店 Lila Thai 按摩
+- 走路 1 分鐘到精品咖啡 Improvise Coffee II，出門即能分組活動
+
+🏡 THEE Vijit Lanna (護城河東側＋市場河濱型)
+📍 地理：護城河畔，前往瓦洛洛市場與濱河非常方便
+🏊 設施：天井植生綠牆泳池、深色質感池底，設計感打卡張力強
+🥐 早餐：精緻法式美學單點盤（A la Carte 現點現做）
+💯 核心動線優勢：
+- 走路 2 分鐘到靜巷高評價 Sense Garden SPA
+- 走路 10 分鐘到瓦洛洛市場（買零食乾貨、泰北伴手禮首選）
+- 走路 12 分鐘到平河景觀餐廳（The Good View 河岸夜景吹風聚餐）
+
+👉 8人家庭投票建議：因行程包含 2/21 週日夜市且有長輩，古城內「Thai Akara」步行往返與分組休息自由度最高！`;
+
+      const textArea = document.createElement('textarea');
+      textArea.value = text;
+      document.body.appendChild(textArea);
+      textArea.select();
+      try {
+        document.execCommand('copy');
+        const btn = document.getElementById('copy-btn');
+        const origHtml = btn.innerHTML;
+        btn.innerHTML = `<i class="fa-solid fa-check"></i> 複製成功！快去貼上到 LINE`;
+        btn.classList.replace('bg-indigo-600', 'bg-emerald-600');
+        setTimeout(() => {
+          btn.innerHTML = origHtml;
+          btn.classList.replace('bg-emerald-600', 'bg-indigo-600');
+        }, 2500);
+        showToast('已複製行程筆記到剪貼簿！');
+      } catch (err) {
+        showToast('複製失敗，請手動複製文字。');
+      }
+      document.body.removeChild(textArea);
+    }
+
+    // Initialize Map on Load
+    window.addEventListener('DOMContentLoaded', initMap);
+  </script>
+</body>
+</html>
