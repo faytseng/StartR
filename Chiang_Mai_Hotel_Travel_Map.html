@@ -109,7 +109,7 @@
         <span class="hidden sm:inline">分享行程</span>
       </button>
 
-      <button onclick="toggleSidebar(true)" class="px-3 sm:px-4 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold shadow-md shadow-indigo-200 hover:shadow-lg transition-all">
+      <button onclick="toggleSidebar(true)" class="px-3 sm:px-4 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold shadow-md shadow-indigo-200 hover:shadow-lg transition-colors">
         <i class="fa-solid fa-list-check"></i>
         <span>景點清單</span>
         <span id="poi-count-badge" class="bg-white/25 text-white px-1.5 py-0.5 rounded-full text-[10px] font-black">0</span>
@@ -164,7 +164,7 @@
         </div>
       </div>
 
-      <div id="distance-hud" class="absolute bottom-5 inset-x-0 mx-auto w-[92%] max-w-[430px] z-[400] bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl border border-slate-100 p-4 hidden transform translate-y-10 opacity-0 transition-all duration-300">
+      <div id="distance-hud" class="absolute bottom-5 inset-x-0 mx-auto w-[92%] max-w-[430px] z-[400] bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl border border-slate-100 p-4 hidden transform transition-all duration-300 translate-y-10 opacity-0">
         <button onclick="clearDistanceHUD()" class="absolute top-3 right-3 w-7 h-7 flex items-center justify-center bg-slate-100 hover:bg-slate-200 rounded-full text-slate-500 transition-colors">
           <i class="fa-solid fa-xmark text-xs"></i>
         </button>
@@ -230,8 +230,8 @@
 
         <div class="relative mb-2.5">
           <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
-          <input type="text" id="search-input" placeholder="搜尋景點、米其林餐廳、夜市、按摩或車站..." class="w-full bg-slate-50 border border-slate-200 text-slate-800 text-xs rounded-xl py-2.5 pl-9 pr-9 focus:outline-none focus:ring-2 focus:ring-indigo-200" />
-          <button id="clear-search" onclick="clearSearch()" class="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 flex items-center justify-center text-slate-400 hover:text-slate-600 hidden rounded-full hover:bg-slate-100">
+          <input type="text" id="search-input" placeholder="搜尋景點、米其林餐廳、夜市、按摩或車站..." class="w-full bg-slate-50 border border-slate-200 text-slate-800 text-xs rounded-xl pl-9 pr-9 py-2.5 outline-none focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100 transition-all" />
+          <button id="clear-search" onclick="clearSearch()" class="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 flex items-center justify-center text-slate-400 hover:text-slate-600 hidden rounded-full hover:bg-slate-200">
             <i class="fa-solid fa-xmark text-xs"></i>
           </button>
         </div>
@@ -240,7 +240,7 @@
           <button onclick="setCategoryFilter('all')" class="cat-filter active shrink-0 px-3 py-1.5 rounded-full text-[11px] font-bold bg-slate-900 text-white transition-colors" data-cat="all">全部</button>
           <button onclick="setCategoryFilter('massage')" class="cat-filter shrink-0 px-3 py-1.5 rounded-full text-[11px] font-bold bg-slate-100 text-slate-600 hover:bg-emerald-100 hover:text-emerald-700 transition-colors" data-cat="massage">按摩</button>
           <button onclick="setCategoryFilter('market')" class="cat-filter shrink-0 px-3 py-1.5 rounded-full text-[11px] font-bold bg-slate-100 text-slate-600 hover:bg-purple-100 hover:text-purple-700 transition-colors" data-cat="market">夜市</button>
-          <button onclick="setCategoryFilter('sight')" class="cat-filter shrink-0 px-3 py-1.5 rounded-full text-[11px] font-bold bg-slate-100 text-slate-600 hover:bg-rose-100 hover:text-rose-700 transition-colors" data-cat="sight">名勝</button>
+          <button onclick="setCategoryFilter('sight')" class="cat-filter shrink-0 px-3 py-1.5 rounded-full text-[11px] font-bold bg-slate-100 text-slate-600 hover:bg-rose-100 hover:text-rose-700 transition-colors" data-cat="sight">景點</button>
           <button onclick="setCategoryFilter('photo')" class="cat-filter shrink-0 px-3 py-1.5 rounded-full text-[11px] font-bold bg-slate-100 text-slate-600 hover:bg-pink-100 hover:text-pink-700 transition-colors" data-cat="photo">打卡</button>
           <button onclick="setCategoryFilter('food')" class="cat-filter shrink-0 px-3 py-1.5 rounded-full text-[11px] font-bold bg-slate-100 text-slate-600 hover:bg-amber-100 hover:text-amber-800 transition-colors" data-cat="food">美食</button>
           <button onclick="setCategoryFilter('cafe')" class="cat-filter shrink-0 px-3 py-1.5 rounded-full text-[11px] font-bold bg-slate-100 text-slate-600 hover:bg-sky-100 hover:text-sky-700 transition-colors" data-cat="cafe">咖啡</button>
@@ -319,7 +319,7 @@
             <i class="fa-solid fa-lightbulb text-amber-600"></i> 8人家族同行綜合考量建議
           </h4>
           <p class="text-xs text-amber-950 leading-relaxed">
-            如果家族成員有長輩、或是第一次拜訪清邁，<strong>Thai Akara</strong> 的古城核心地理位置無可替代，尤其遇到週日夜市大人潮時，讓長輩容易返房休息、大家又能自由分組外出，動線最順。
+            如果家族成員有長輩、或是第一次拜訪清邁，<strong>Thai Akara</strong> 的古城核心地理位置無可替代，尤其遇到週日夜市大人潮時，讓長輩容易回房休息，年輕人也能迅速前往主街探索。相較之下，<strong>THEE Vijit</strong> 則更適合偏好河濱、文青氛圍與打卡景觀的家庭；如果想要平衡兩者，最好以飯店地理位置與步行動線作為主要決策標準。
           </p>
         </div>
       </div>
@@ -354,7 +354,7 @@
         </div>
 
         <div class="text-[11px] text-slate-500 bg-slate-50 p-3 rounded-xl border border-slate-100">
-          💡 <strong>小撇步：</strong>可以把這份 HTML 檔案直接傳到 LINE 聊天室，或拖上 Netlify Drop 生成專屬連結。 
+          💡 <strong>小撇步：</strong>可以把這份 HTML 檔案直接傳到 LINE 聊天室，或拖上 Netlify Drop 生成專屬連結。
         </div>
       </div>
     </div>
@@ -402,22 +402,22 @@
     };
 
     const POIS = [
-      { id: 'lila_massage', name: 'Lila Thai Massage', category: 'massage', tag: '平價名店', coords: [18.7895, 98.9890], walkThai: { time: '🚶 3 分鐘', dist: '250m' }, walkThee: { time: '🚶 6 分鐘', dist: '500m' }, highlight: '平價且好評高，適合家人一起放鬆。', sphere: ['akara', 'all'] },
-      { id: 'fah_lanna_spa', name: 'Fah Lanna Spa', category: 'massage', tag: '頂級竹林', coords: [18.7920, 98.9855], walkThai: { time: '🚶 7 分鐘', dist: '600m' }, walkThee: { time: '🚶 8 分鐘', dist: '700m' }, highlight: '質感有水準、適合想放鬆的家長。', sphere: ['akara', 'all'] },
-      { id: 'sunday_market', name: '清邁週日夜市 Sunday Walking Street', category: 'market', tag: '2/21重點', coords: [18.7878, 98.9890], walkThai: { time: '🚶 4 分鐘', dist: '350m' }, walkThee: { time: '🚶 8 分鐘', dist: '650m' }, highlight: '週日夜市的核心路線，吃喝逛街最便利。', sphere: ['akara', 'all'] },
-      { id: 'warorot', name: '瓦洛洛市場 Warorot Market', category: 'market', tag: '在地市場', coords: [18.7900, 99.0003], walkThai: { time: '🚶 14 分鐘', dist: '1.1km' }, walkThee: { time: '🚶 7 分鐘', dist: '600m' }, highlight: '適合買伴手禮與吃在地小吃。', sphere: ['thee', 'all'] },
-      { id: 'tha_phae', name: '塔佩門 Tha Phae Gate', category: 'sight', tag: '清邁門面', coords: [18.7877, 98.9931], walkThai: { time: '🚶 6 分鐘', dist: '500m' }, walkThee: { time: '🚶 8 分鐘', dist: '700m' }, highlight: '清邁最有代表性的城門景觀。', sphere: ['akara', 'all'] },
-      { id: 'wat_chedi_luang', name: '柴迪隆寺 Wat Chedi Luang', category: 'sight', tag: '大佛塔遺蹟', coords: [18.7870, 98.9865], walkThai: { time: '🚶 9 分鐘', dist: '700m' }, walkThee: { time: '🚶 9 分鐘', dist: '750m' }, highlight: '和夜市有連接，走路很方便。', sphere: ['akara', 'all'] },
-      { id: 'wat_phra_singh', name: '帕辛寺 Wat Phra Singh', category: 'sight', tag: '地位崇高', coords: [18.7884, 98.9814], walkThai: { time: '🚶 12 分鐘', dist: '1.0km' }, walkThee: { time: '🚶 10 分鐘', dist: '900m' }, highlight: '具有歷史感，適合拍照與短暫參觀。', sphere: ['akara', 'all'] },
-      { id: 'three_kings', name: '三王紀念碑廣場', category: 'photo', tag: '古城地標', coords: [18.7899, 98.9875], walkThai: { time: '🚶 5 分鐘', dist: '450m' }, walkThee: { time: '🚶 7 分鐘', dist: '600m' }, highlight: '古城最常見的打卡點之一。', sphere: ['akara', 'all'] },
-      { id: 'kalm_village', name: 'Kalm Village 清邁工藝美學園區', category: 'photo', tag: '文青必拍', coords: [18.7865, 98.9880], walkThai: { time: '🚶 8 分鐘', dist: '650m' }, walkThee: { time: '🚶 10 分鐘', dist: '900m' }, highlight: '文青與拍照感十足。', sphere: ['akara', 'all'] },
-      { id: 'house_by_ginger', name: 'The House by Ginger', category: 'food', tag: '米其林推薦', coords: [18.7905, 98.9935], walkThai: { time: '🚶 3 分鐘', dist: '250m' }, walkThee: { time: '🚶 4 分鐘', dist: '300m' }, highlight: '適合安排正式餐食，口碑非常好。', sphere: ['akara', 'all'] },
-      { id: 'aoy_dee', name: 'Aroy Dee', category: 'food', tag: '在地熱炒', coords: [18.7915, 98.9935], walkThai: { time: '🚶 4 分鐘', dist: '300m' }, walkThee: { time: '🚶 3 分鐘', dist: '250m' }, highlight: '家人聚餐與熱炒很方便。', sphere: ['akara', 'thee', 'all'] },
-      { id: 'improvise_coffee', name: 'Improvise Coffee II', category: 'cafe', tag: '精品手沖', coords: [18.7902, 98.9912], walkThai: { time: '🚶 1 分鐘', dist: '60m' }, walkThee: { time: '🚶 4 分鐘', dist: '300m' }, highlight: '出門就能分組，適合晨間咖啡與小朋友。', sphere: ['akara', 'all'] },
-      { id: 'the_hideout', name: 'The Hideout', category: 'cafe', tag: '大份量早午餐', coords: [18.7935, 98.9925], walkThai: { time: '🚶 5 分鐘', dist: '400m' }, walkThee: { time: '🚶 4 分鐘', dist: '350m' }, highlight: '適合全家慢慢吃早餐。', sphere: ['akara', 'thee', 'all'] },
-      { id: 'tha_phae_station', name: '塔佩門雙條車 / Tuk-Tuk 排班樞紐', category: 'transport', tag: '叫車最快', coords: [18.7875, 98.9935], walkThai: { time: '🚶 6 分鐘', dist: '500m' }, walkThee: { time: '🚶 8 分鐘', dist: '650m' }, highlight: '交通接駁最方便。', sphere: ['akara', 'transport', 'all'] },
-      { id: 'railway_station', name: '清邁火車站', category: 'transport', tag: '鐵路總站', coords: [18.7860, 99.0165], walkThai: { time: '🚗 10 分鐘', dist: '2.8km' }, walkThee: { time: '🚗 11 分鐘', dist: '3.1km' }, highlight: '適合搭火車進出清邁。', sphere: ['transport', 'all'] },
-      { id: 'cnx_airport', name: '清邁國際機場 (CNX Airport)', category: 'transport', tag: '國際機場', coords: [18.7678, 98.9640], walkThai: { time: '🚗 12 分鐘', dist: '4.8km' }, walkThee: { time: '🚗 13 分鐘', dist: '5.1km' }, highlight: '出發與回程上機最為方便。', sphere: ['transport', 'all'] }
+      { id: 'lila_massage', name: 'Lila Thai Massage', category: 'massage', tag: '平價名店', coords: [18.7895, 98.9890], walkThai: { time: '🚶 3 分鐘', dist: '250m' }, walkThee: { time: '🚶 5 分鐘', dist: '450m' }, sphere: ['akara'], highlight: '平價又有名氣的按摩店，適合逛完古城後立即放鬆。' },
+      { id: 'fah_lanna_spa', name: 'Fah Lanna Spa', category: 'massage', tag: '頂級竹林', coords: [18.7920, 98.9855], walkThai: { time: '🚶 7 分鐘', dist: '600m' }, walkThee: { time: '🚶 8 分鐘', dist: '650m' }, sphere: ['akara'], highlight: '竹林氛圍很有清邁特色，適合想要放鬆和深度休息的家庭。' },
+      { id: 'sunday_market', name: '清邁週日夜市 Sunday Walking Street', category: 'market', tag: '2/21重點', coords: [18.7878, 98.9890], walkThai: { time: '🚶 4 分鐘', dist: '350m' }, walkThee: { time: '🚶 6 分鐘', dist: '500m' }, sphere: ['akara'], highlight: '週末夜市最熱鬧的路段，年輕人和長輩都能快速逛起來。' },
+      { id: 'warorot', name: '瓦洛洛市場 Warorot Market', category: 'market', tag: '在地市場', coords: [18.7900, 99.0003], walkThai: { time: '🚶 14 分鐘', dist: '1.1km' }, walkThee: { time: '🚶 8 分鐘', dist: '700m' }, sphere: ['thee'], highlight: '適合買當地美食、雜貨與在地小吃，體驗更真實的清邁。' },
+      { id: 'tha_phae', name: '塔佩門 Tha Phae Gate', category: 'sight', tag: '清邁門面', coords: [18.7877, 98.9931], walkThai: { time: '🚶 6 分鐘', dist: '500m' }, walkThee: { time: '🚶 7 分鐘', dist: '600m' }, sphere: ['akara'], highlight: '清邁最經典的地標門面，適合帶家人打卡留影。' },
+      { id: 'wat_chedi_luang', name: '柴迪隆寺 Wat Chedi Luang', category: 'sight', tag: '大佛塔遺蹟', coords: [18.7870, 98.9865], walkThai: { time: '🚶 9 分鐘', dist: '700m' }, walkThee: { time: '🚶 12 分鐘', dist: '1.0km' }, sphere: ['akara'], highlight: '歷史感很強的大佛塔建築，是古城遊覽的必去景點。' },
+      { id: 'wat_phra_singh', name: '帕辛寺 Wat Phra Singh', category: 'sight', tag: '地位崇高', coords: [18.7884, 98.9814], walkThai: { time: '🚶 12 分鐘', dist: '1.0km' }, walkThee: { time: '🚶 14 分鐘', dist: '1.2km' }, sphere: ['akara'], highlight: '古城最具代表性的佛寺之一，文化與建築都很值得觀賞。' },
+      { id: 'three_kings', name: '三王紀念碑廣場', category: 'photo', tag: '古城地標', coords: [18.7899, 98.9875], walkThai: { time: '🚶 5 分鐘', dist: '450m' }, walkThee: { time: '🚶 7 分鐘', dist: '600m' }, sphere: ['akara'], highlight: '適合一群人拍照留念，古城的城市氛圍很適合家庭合照。' },
+      { id: 'kalm_village', name: 'Kalm Village 清邁工藝美學園區', category: 'photo', tag: '文青必拍', coords: [18.7865, 98.9880], walkThai: { time: '🚶 8 分鐘', dist: '650m' }, walkThee: { time: '🚶 11 分鐘', dist: '900m' }, sphere: ['akara'], highlight: '結合手工藝與文青風格的拍照空間，很適合家庭或朋友大合照。' },
+      { id: 'house_by_ginger', name: 'The House by Ginger', category: 'food', tag: '米其林推薦', coords: [18.7905, 98.9935], walkThai: { time: '🚶 3 分鐘', dist: '250m' }, walkThee: { time: '🚶 4 分鐘', dist: '350m' }, sphere: ['akara'], highlight: '餐點品質穩定且氣氛好，非常適合家庭慶祝飯或特別晚餐。' },
+      { id: 'aoy_dee', name: 'Aroy Dee', category: 'food', tag: '在地熱炒', coords: [18.7915, 98.9935], walkThai: { time: '🚶 4 分鐘', dist: '300m' }, walkThee: { time: '🚶 3 分鐘', dist: '250m' }, sphere: ['akara'], highlight: '適合想吃道地熱炒與當地風味，受歡迎程度很高。' },
+      { id: 'improvise_coffee', name: 'Improvise Coffee II', category: 'cafe', tag: '精品手沖', coords: [18.7902, 98.9912], walkThai: { time: '🚶 1 分鐘', dist: '60m' }, walkThee: { time: '🚶 2 分鐘', dist: '120m' }, sphere: ['akara'], highlight: '咖啡與早午餐都很適合，步行距離短，是最輕鬆的一站。' },
+      { id: 'the_hideout', name: 'The Hideout', category: 'cafe', tag: '大份量早午餐', coords: [18.7935, 98.9925], walkThai: { time: '🚶 5 分鐘', dist: '400m' }, walkThee: { time: '🚶 4 分鐘', dist: '350m' }, sphere: ['thee'], highlight: '餐點份量足、適合吃飽後再繼續逛街，很符合家庭出遊習慣。' },
+      { id: 'tha_phae_station', name: '塔佩門雙條車 / Tuk-Tuk 排班樞紐', category: 'transport', tag: '叫車最快', coords: [18.7875, 98.9935], walkThai: { time: '🚶 6 分鐘', dist: '500m' }, walkThee: { time: '🚶 8 分鐘', dist: '650m' }, sphere: ['transport'], highlight: '最方便的交通中轉點，適合搭車去機場、火車站或其他景點。' },
+      { id: 'railway_station', name: '清邁火車站', category: 'transport', tag: '鐵路總站', coords: [18.7860, 99.0165], walkThai: { time: '🚗 10 分鐘', dist: '2.8km' }, walkThee: { time: '🚗 9 分鐘', dist: '2.5km' }, sphere: ['transport'], highlight: '如果從火車進入清邁，這裡是最常用的交通樞紐。' },
+      { id: 'cnx_airport', name: '清邁國際機場 (CNX Airport)', category: 'transport', tag: '國際機場', coords: [18.7678, 98.9640], walkThai: { time: '🚗 12 分鐘', dist: '4.8km' }, walkThee: { time: '🚗 13 分鐘', dist: '5.2km' }, sphere: ['transport'], highlight: '適合提前安排接送縮短旅程不適，適合長途旅行的出入境路線。' }
     ];
 
     function normalizePOI(poi) {
@@ -441,10 +441,27 @@
 
       L.control.zoom({ position: 'topright' }).addTo(map);
 
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+      const cartoTileLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
         attribution: '&copy; OSM & CARTO',
-        maxZoom: 19
-      }).addTo(map);
+        maxZoom: 19,
+        noWrap: true
+      });
+
+      const fallbackTileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors',
+        maxZoom: 19,
+        noWrap: true
+      });
+
+      cartoTileLayer.on('tileerror', function () {
+        if (!map._fallbackTileLoaded) {
+          map.removeLayer(cartoTileLayer);
+          fallbackTileLayer.addTo(map);
+          map._fallbackTileLoaded = true;
+        }
+      });
+
+      cartoTileLayer.addTo(map);
 
       circlesLayer.addTo(map);
       sundayLayer.addTo(map);
@@ -912,7 +929,7 @@
     }
 
     function copyToClipboard() {
-      const text = `🇹🇭 清邁 8 人家族旅遊・雙飯店全生活圈評估筆記\n\n🏡 Thai Akara - Lanna Boutique\n📍 地理：古城正中心，去哪都近，極適合長輩與初訪家庭\n🏊 設施：純白莊園採光大泳池、日光浴躺椅、水質清澈\n🍳 早餐：池畔半露天現做熱食\n💯 核心動線優勢：\n- 走路 3–4 分鐘直達週日夜市\n- 走路 3 分鐘到按摩店\n- 走路 1 分鐘到精品咖啡\n\n🏡 THEE Vijit Lanna\n📍 地理：護城河畔，適合想要市場與河濱感受者\n🏊 設施：天井綠牆泳池，設計感與拍照效果強\n🥐 早餐：法式美學單點早餐\n\n👉 適合家人一起比較並表決。`;
+      const text = `🇹🇭 清邁 8 人家族旅遊・雙飯店全生活圈評估筆記\n\n🏡 Thai Akara - Lanna Boutique\n📍 地理：古城正中心，去哪都近，極適合長輩與初訪旅客。\n🧖‍♀️ 優點：泳池大、早餐好、夜市步行方便。\n📌 風格：適合家族型、長輩友善。\n\n🏨 THEE Vijit Lanna\n📍 地理：護城河畔與市場圈相連，氛圍較文青。\n🧖‍♀️ 優點：設計感強、河濱景觀、咖啡文化成熟。\n📌 風格：適合拍照、慢活型家庭。\n\n✅ 建議：若重視步行便利與長輩生活動線，選 Thai Akara；若重視氛圍與河濱感，選 THEE Vijit。`;
 
       navigator.clipboard.writeText(text)
         .then(() => showToast('已複製整理筆記'))
